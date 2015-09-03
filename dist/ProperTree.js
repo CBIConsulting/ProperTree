@@ -96,21 +96,163 @@ var ProperTree =
 
 	var _node2 = _interopRequireDefault(_node);
 
+	var _reactFontawesome = __webpack_require__(6);
+
+	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "tree",
 
 		getDefaultProps: function getDefaultProps() {
 			return {
 				data: null,
-				itemRenderer: _node2["default"]
+				itemRenderer: _node2["default"],
+				selectable: 'recursive',
+				emptyMsg: 'No data found',
+				idField: 'id',
+				parentField: 'parent_id',
+				displayField: 'label',
+				uniqueId: _underscore2["default"].uniqueId('propertree-')
 			};
 		},
 
+		getInitialState: function getInitialState() {
+			return {
+				rawdata: null,
+				mounted: false,
+				tree_data: null
+			};
+		},
+
+		componentDidMount: function componentDidMount() {
+			if (!this.state.mounted) {
+				this.buildTree(this.props.data);
+			}
+
+			this.setState({
+				mounted: true
+			});
+		},
+
+		componentDidUpdate: function componentDidUpdate() {
+			if (this.rebuildTree) {
+				this.buildTree();
+				this.rebuildTree = false;
+			}
+		},
+
+		shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+			this.rebuildTree = !_underscore2["default"].isEqual(nextProps.data, this.props.data);
+
+			return true;
+		},
+
+		buildTree: function buildTree(data) {
+			var _this = this;
+
+			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, data, []));
+			var tree_data = null;
+
+			raw = _underscore2["default"].map(raw, function (item) {
+				item._properId = item[_this.props.idField];
+				item._selected = false;
+				item._label = item[_this.props.displayField];
+
+				return item;
+			});
+
+			tree_data = this.buildTreeData(raw);
+
+			console.log(raw);
+
+			this.setState({
+				rawdata: raw,
+				tree_data: tree_data
+			});
+		},
+
+		buildTreeData: function buildTreeData(tree) {
+			var _this2 = this;
+
+			var parent = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+			var result = [];
+			var findcond = {};
+			var branch = [];
+
+			findcond[this.props.parentField] = parent;
+			branch = _underscore2["default"].where(tree, findcond);
+
+			if (branch.length) {
+				result = _underscore2["default"].map(branch, function (leaf) {
+					var children = _this2.buildTreeData(tree, leaf[_this2.props.idField]);
+					var item = _underscore2["default"].clone(leaf);
+
+					if (children.length) {
+						item.children = children;
+					}
+
+					return item;
+				});
+			}
+
+			return result;
+		},
+
+		renderNodes: function renderNodes(data) {
+			var _this3 = this;
+
+			var result = [];
+			var Renderer = this.props.itemRenderer;
+
+			result = _underscore2["default"].map(data, function (item) {
+				var children = [];
+
+				if (typeof item.children != 'undefined' && item.children.length) {
+					children = _this3.renderNodes(item.children);
+				}
+
+				return _reactAddons2["default"].createElement(
+					Renderer,
+					{ key: 'propertree-node-' + item[_this3.props.idField], data: item },
+					children
+				);
+			});
+
+			return result;
+		},
+
 		render: function render() {
+			var content = _reactAddons2["default"].createElement(
+				"div",
+				{ className: "preloading" },
+				_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "spinner", spin: true, size: "2x" })
+			);
+
+			if (this.state.mounted) {
+				if (!this.state.tree_data || !this.state.tree_data.length) {
+					content = _reactAddons2["default"].createElement(
+						"p",
+						{ className: "emptymsg muted text-muted" },
+						this.props.emptyMsg
+					);
+				} else {
+					content = _reactAddons2["default"].createElement(
+						"div",
+						{ className: "propertree-container" },
+						_reactAddons2["default"].createElement(
+							"ul",
+							{ className: "propertree-branch root" },
+							this.renderNodes(this.state.tree_data)
+						)
+					);
+				}
+			}
+
 			return _reactAddons2["default"].createElement(
-				"p",
-				null,
-				_reactAddons2["default"].createElement(_node2["default"], null)
+				"div",
+				{ className: "propertree", id: this.props.uniqueId },
+				content
 			);
 		}
 	});
@@ -169,12 +311,42 @@ var ProperTree =
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "node",
 
+		getDefaultProps: function getDefaultProps() {
+			return {
+				data: null
+			};
+		},
+
 		render: function render() {
+			var children = null;
+
+			if (this.props.children.length) {
+				children = _reactAddons2["default"].createElement(
+					"div",
+					{ className: "propertree-node-children" },
+					_reactAddons2["default"].createElement(
+						"ul",
+						{ className: "propertable-subtree" },
+						this.props.children
+					)
+				);
+			}
+
 			return _reactAddons2["default"].createElement(
-				"p",
-				null,
-				_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "rocket" }),
-				"hola mundo"
+				"li",
+				{ className: "propertable-node node-" },
+				_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
+				_reactAddons2["default"].createElement(
+					"div",
+					{ className: "propertree-node-desc" },
+					_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "folder-open" }),
+					_reactAddons2["default"].createElement(
+						"span",
+						{ className: "propertree-node-name" },
+						this.props.data._label
+					)
+				),
+				children
 			);
 		}
 	});

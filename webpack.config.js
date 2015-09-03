@@ -20,18 +20,10 @@ module.exports = {
         loader: "file?name=[name].[ext]",
       },
       {
-        test: /\.(css)(\?.+)$/,
-        loader: ExtractTextPlugin.extract('style-loader!css-loader')
-      },
-      {
         test: /\.scss$/,
         loader: ExtractTextPlugin.extract('css!sass?includePaths[]='+path.resolve(__dirname, "./node_modules/compass-mixins/lib"))
       },
-      { test: /globalize/, loaders: ["babel-loader", 'imports?define=>false'] },
-      {
-        test: /\.(otf|eot|svg|ttf|woff|woff2)(\?.+)$/,
-        loader: 'url-loader?limit=8192'
-      }
+      { test: /globalize/, loaders: ["babel-loader", 'imports?define=>false'] }
     ],
   },
   externals: {
