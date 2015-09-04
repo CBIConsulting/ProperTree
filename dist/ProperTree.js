@@ -319,6 +319,7 @@ var ProperTree =
 
 		render: function render() {
 			var children = null;
+			var icon = 'file-o';
 
 			if (this.props.children.length) {
 				children = _reactAddons2["default"].createElement(
@@ -326,20 +327,22 @@ var ProperTree =
 					{ className: "propertree-node-children" },
 					_reactAddons2["default"].createElement(
 						"ul",
-						{ className: "propertable-subtree" },
+						{ className: "propertree-branch subtree" },
 						this.props.children
 					)
 				);
+
+				icon = 'folder-open';
 			}
 
 			return _reactAddons2["default"].createElement(
 				"li",
-				{ className: "propertable-node node-" },
-				_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
+				{ className: "propertree-node node-" + this.props.data._properId },
 				_reactAddons2["default"].createElement(
 					"div",
 					{ className: "propertree-node-desc" },
-					_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "folder-open" }),
+					_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
+					_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: icon, fixedWidth: true }),
 					_reactAddons2["default"].createElement(
 						"span",
 						{ className: "propertree-node-name" },

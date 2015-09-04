@@ -116,7 +116,7 @@ export default React.createClass({
 
 	render() {
 		let content = <div className="preloading">
-			<Fa name="spinner" spin size="2x"/>
+			<Fa name="spinner" spin size="2x" />
 		</div>;
 
 		if (this.state.mounted) {

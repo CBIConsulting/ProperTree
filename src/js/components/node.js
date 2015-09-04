@@ -12,19 +12,22 @@ export default React.createClass({
 
 	render() {
 		let children = null;
+		let icon = 'file-o';
 
 		if (this.props.children.length) {
 			children = <div className="propertree-node-children">
-				<ul className="propertable-subtree">
+				<ul className="propertree-branch subtree">
 					{this.props.children}
 				</ul>
 			</div>;
+
+			icon = 'folder-open';
 		}
 
-		return <li className={"propertable-node node-"}>
-			<div className="propertree-node-bg" />
+		return <li className={"propertree-node node-"+this.props.data._properId}>
 			<div className="propertree-node-desc">
-				<Fa name="folder-open" />
+				<div className="propertree-node-bg" />
+				<Fa name={icon} fixedWidth />
 				<span className="propertree-node-name">
 					{this.props.data._label}
 				</span>
