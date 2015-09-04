@@ -104,6 +104,21 @@ var ProperTree =
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 
+	function pathTo(data, node) {
+		var path = [];
+		var citem = undefined;
+
+		citem = node;
+		path.push(citem._properId);
+
+		while (citem._parent) {
+			path.push(citem._properId);
+			citem = _underscore2["default"].findWhere(data, { _properId: citem._parent });
+		}
+
+		return _underscore2["default"].uniq(path);
+	}
+
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "tree",
 
@@ -119,7 +134,7 @@ var ProperTree =
 				collapsable: true,
 				uniqueId: _underscore2["default"].uniqueId('propertree-'),
 				defaultSelected: [],
-				defaultSExpanded: []
+				defaultExpanded: []
 			};
 		},
 
@@ -128,8 +143,8 @@ var ProperTree =
 				rawdata: null,
 				mounted: false,
 				tree_data: null,
-				selected: [],
-				expanded: []
+				selected: _underscore2["default"].clone(this.props.defaultSelected) || [],
+				expanded: _underscore2["default"].clone(this.props.defaultExpanded) || []
 			};
 		},
 
@@ -161,20 +176,35 @@ var ProperTree =
 
 			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, data, []));
 			var tree_data = null;
+			var expandedPaths = [];
 
 			raw = _underscore2["default"].map(raw, function (item) {
 				item._properId = item[_this.props.idField];
 				item._parent = item[_this.props.parentField];
 				item._selected = false;
 				item._label = item[_this.props.displayField];
-				item._collapsed = true;
+				item._collapsed = true && _this.props.collapsable;
+
+				return item;
+			});
+
+			_underscore2["default"].each(this.state.expanded, function (item) {
+				var path = pathTo(raw, _underscore2["default"].findWhere(raw, { _properId: item }));
+
+				expandedPaths.push.apply(expandedPaths, path);
+			});
+
+			expandedPaths = _underscore2["default"].uniq(expandedPaths);
+
+			raw = _underscore2["default"].map(raw, function (item) {
+				if (expandedPaths.indexOf(item._properId) >= 0) {
+					item._collapsed = false;
+				}
 
 				return item;
 			});
 
 			tree_data = this.buildTreeData(raw);
-
-			console.log(raw);
 
 			this.setState({
 				rawdata: raw,
@@ -225,7 +255,7 @@ var ProperTree =
 
 				return _reactAddons2["default"].createElement(
 					_node2["default"],
-					{ renderer: Renderer, key: 'propertree-node-' + item[_this3.props.idField], data: item },
+					{ collapsed: item._collapsed, renderer: Renderer, key: 'propertree-node-' + item[_this3.props.idField], data: item },
 					children
 				);
 			});

@@ -5,6 +5,21 @@ import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
 
+function pathTo(data, node) {
+	let path = [];
+	let citem;
+
+	citem = node;
+	path.push(citem._properId);
+
+	while(citem._parent) {
+		path.push(citem._properId);
+		citem = _.findWhere(data, {_properId: citem._parent});
+	}
+
+	return _.uniq(path);
+}
+
 export default React.createClass({
 	getDefaultProps() {
 		return {
@@ -18,7 +33,7 @@ export default React.createClass({
 			collapsable: true,
 			uniqueId: _.uniqueId('propertree-'),
 			defaultSelected: [],
-			defaultSExpanded: []
+			defaultExpanded: []
 		}
 	},
 
@@ -27,8 +42,8 @@ export default React.createClass({
 			rawdata: null,
 			mounted: false,
 			tree_data: null,
-			selected: [],
-			expanded: []
+			selected: _.clone(this.props.defaultSelected) || [],
+			expanded: _.clone(this.props.defaultExpanded) || []
 		}
 	},
 
@@ -58,20 +73,35 @@ export default React.createClass({
 	buildTree(data) {
 		let raw = _.values($.extend(true, data, []));
 		let tree_data = null;
+		let expandedPaths = [];
 
 		raw = _.map(raw, (item) => {
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
 			item._selected = false;
 			item._label = item[this.props.displayField];
-			item._collapsed = true;
+			item._collapsed = true && this.props.collapsable;
+
+			return item;
+		});
+
+		_.each(this.state.expanded, (item) => {
+			let path = pathTo(raw, _.findWhere(raw, {_properId: item}));
+
+			expandedPaths.push.apply(expandedPaths, path);
+		});
+
+		expandedPaths = _.uniq(expandedPaths);
+
+		raw = _.map(raw, (item) => {
+			if (expandedPaths.indexOf(item._properId) >= 0) {
+				item._collapsed = false;
+			}
 
 			return item;
 		});
 
 		tree_data = this.buildTreeData(raw);
-
-		console.log(raw);
 
 		this.setState({
 			rawdata: raw,
@@ -114,7 +144,7 @@ export default React.createClass({
 				children = this.renderNodes(item.children);
 			}
 
-			return <Node renderer={Renderer} key={'propertree-node-'+item[this.props.idField]} data={item}>
+			return <Node collapsed={item._collapsed} renderer={Renderer} key={'propertree-node-'+item[this.props.idField]} data={item}>
 				{children}
 			</Node>;
 		});
