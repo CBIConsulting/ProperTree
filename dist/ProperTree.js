@@ -116,6 +116,7 @@ var ProperTree =
 				idField: 'id',
 				parentField: 'parent_id',
 				displayField: 'label',
+				collapsable: true,
 				uniqueId: _underscore2["default"].uniqueId('propertree-'),
 				defaultSelected: [],
 				defaultSExpanded: []
@@ -163,8 +164,10 @@ var ProperTree =
 
 			raw = _underscore2["default"].map(raw, function (item) {
 				item._properId = item[_this.props.idField];
+				item._parent = item[_this.props.parentField];
 				item._selected = false;
 				item._label = item[_this.props.displayField];
+				item._collapsed = true;
 
 				return item;
 			});
@@ -326,30 +329,65 @@ var ProperTree =
 		getDefaultProps: function getDefaultProps() {
 			return {
 				data: null,
-				renderer: _renderer2["default"]
+				renderer: _renderer2["default"],
+				collapsable: true,
+				collapsed: true,
+				onCollapseToggle: null
 			};
+		},
+
+		getInitialState: function getInitialState() {
+			return {
+				collapsed: this.props.collapsed
+			};
+		},
+
+		handleTogglerClick: function handleTogglerClick(e) {
+			e.preventDefault();
+
+			this.setState({ 'collapsed': !this.state.collapsed });
 		},
 
 		render: function render() {
 			var has_children = !!this.props.children.length;
 			var children = null;
+			var toggler = null;
 			var Renderer = this.props.renderer;
+			var collapsedClass = 'collapsed';
+			var togglerIcon = _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "caret-right", fixedWidth: true });
+
+			if (!this.state.collapsed || !this.props.data._parent) {
+				collapsedClass = 'expanded';
+				togglerIcon = _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "caret-down", fixedWidth: true });
+			}
 
 			if (has_children) {
-				children = _reactAddons2["default"].createElement(
-					"div",
-					{ className: "propertree-node-children" },
-					_reactAddons2["default"].createElement(
-						"ul",
-						{ className: "propertree-branch subtree" },
-						this.props.children
-					)
-				);
+
+				if (this.props.data._parent) {
+					toggler = _reactAddons2["default"].createElement(
+						"a",
+						{ href: "#", onClick: this.handleTogglerClick, className: "propertree-toggler" },
+						togglerIcon
+					);
+				}
+
+				if (!this.state.collapsed || !this.props.data._parent) {
+					children = _reactAddons2["default"].createElement(
+						"div",
+						{ className: "propertree-node-children" },
+						_reactAddons2["default"].createElement(
+							"ul",
+							{ className: "propertree-branch subtree" },
+							this.props.children
+						)
+					);
+				}
 			}
 
 			return _reactAddons2["default"].createElement(
 				"li",
-				{ className: "propertree-node node-" + this.props.data._properId },
+				{ className: "propertree-node node-" + this.props.data._properId + ' ' + collapsedClass },
+				toggler,
 				_reactAddons2["default"].createElement(Renderer, { data: this.props.data, has_children: has_children }),
 				children
 			);

@@ -15,6 +15,7 @@ export default React.createClass({
 			idField: 'id',
 			parentField: 'parent_id',
 			displayField: 'label',
+			collapsable: true,
 			uniqueId: _.uniqueId('propertree-'),
 			defaultSelected: [],
 			defaultSExpanded: []
@@ -60,8 +61,10 @@ export default React.createClass({
 
 		raw = _.map(raw, (item) => {
 			item._properId = item[this.props.idField];
+			item._parent = item[this.props.parentField];
 			item._selected = false;
 			item._label = item[this.props.displayField];
+			item._collapsed = true;
 
 			return item;
 		});
