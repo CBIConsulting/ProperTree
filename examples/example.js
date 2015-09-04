@@ -29,5 +29,5 @@ $(function () {
 		label: 'item-6'
 	}];
 
-	React.render(React.createElement(ProperTree, { data: data }), body);
+	React.render(React.createElement(ProperTree, { data: data, collapsable: true, defaultExpanded: [5] }), body);
 });
