@@ -2,19 +2,22 @@ import React from "react/addons";
 import $ from "jquery";
 import _ from "underscore";
 import Node from "./node";
+import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
 
 export default React.createClass({
 	getDefaultProps() {
 		return {
 			data: null,
-			itemRenderer: Node,
+			itemRenderer: ItemRenderer,
 			selectable: 'recursive',
 			emptyMsg: 'No data found',
 			idField: 'id',
 			parentField: 'parent_id',
 			displayField: 'label',
-			uniqueId: _.uniqueId('propertree-')
+			uniqueId: _.uniqueId('propertree-'),
+			defaultSelected: [],
+			defaultSExpanded: []
 		}
 	},
 
@@ -22,7 +25,9 @@ export default React.createClass({
 		return {
 			rawdata: null,
 			mounted: false,
-			tree_data: null
+			tree_data: null,
+			selected: [],
+			expanded: []
 		}
 	},
 
@@ -106,9 +111,9 @@ export default React.createClass({
 				children = this.renderNodes(item.children);
 			}
 
-			return <Renderer key={'propertree-node-'+item[this.props.idField]} data={item}>
+			return <Node renderer={Renderer} key={'propertree-node-'+item[this.props.idField]} data={item}>
 				{children}
-			</Renderer>;
+			</Node>;
 		});
 
 		return result;

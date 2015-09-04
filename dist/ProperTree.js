@@ -59,7 +59,7 @@ var ProperTree =
 
 	var _componentsTree2 = _interopRequireDefault(_componentsTree);
 
-	__webpack_require__(7);
+	__webpack_require__(8);
 
 	exports["default"] = _componentsTree2["default"];
 	module.exports = exports["default"];
@@ -96,6 +96,10 @@ var ProperTree =
 
 	var _node2 = _interopRequireDefault(_node);
 
+	var _renderer = __webpack_require__(7);
+
+	var _renderer2 = _interopRequireDefault(_renderer);
+
 	var _reactFontawesome = __webpack_require__(6);
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
@@ -106,13 +110,15 @@ var ProperTree =
 		getDefaultProps: function getDefaultProps() {
 			return {
 				data: null,
-				itemRenderer: _node2["default"],
+				itemRenderer: _renderer2["default"],
 				selectable: 'recursive',
 				emptyMsg: 'No data found',
 				idField: 'id',
 				parentField: 'parent_id',
 				displayField: 'label',
-				uniqueId: _underscore2["default"].uniqueId('propertree-')
+				uniqueId: _underscore2["default"].uniqueId('propertree-'),
+				defaultSelected: [],
+				defaultSExpanded: []
 			};
 		},
 
@@ -120,7 +126,9 @@ var ProperTree =
 			return {
 				rawdata: null,
 				mounted: false,
-				tree_data: null
+				tree_data: null,
+				selected: [],
+				expanded: []
 			};
 		},
 
@@ -213,8 +221,8 @@ var ProperTree =
 				}
 
 				return _reactAddons2["default"].createElement(
-					Renderer,
-					{ key: 'propertree-node-' + item[_this3.props.idField], data: item },
+					_node2["default"],
+					{ renderer: Renderer, key: 'propertree-node-' + item[_this3.props.idField], data: item },
 					children
 				);
 			});
@@ -308,20 +316,26 @@ var ProperTree =
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 
+	var _renderer = __webpack_require__(7);
+
+	var _renderer2 = _interopRequireDefault(_renderer);
+
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "node",
 
 		getDefaultProps: function getDefaultProps() {
 			return {
-				data: null
+				data: null,
+				renderer: _renderer2["default"]
 			};
 		},
 
 		render: function render() {
+			var has_children = !!this.props.children.length;
 			var children = null;
-			var icon = 'file-o';
+			var Renderer = this.props.renderer;
 
-			if (this.props.children.length) {
+			if (has_children) {
 				children = _reactAddons2["default"].createElement(
 					"div",
 					{ className: "propertree-node-children" },
@@ -331,24 +345,12 @@ var ProperTree =
 						this.props.children
 					)
 				);
-
-				icon = 'folder-open';
 			}
 
 			return _reactAddons2["default"].createElement(
 				"li",
 				{ className: "propertree-node node-" + this.props.data._properId },
-				_reactAddons2["default"].createElement(
-					"div",
-					{ className: "propertree-node-desc" },
-					_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
-					_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: icon, fixedWidth: true }),
-					_reactAddons2["default"].createElement(
-						"span",
-						{ className: "propertree-node-name" },
-						this.props.data._label
-					)
-				),
+				_reactAddons2["default"].createElement(Renderer, { data: this.props.data, has_children: has_children }),
 				children
 			);
 		}
@@ -464,6 +466,70 @@ var ProperTree =
 
 /***/ },
 /* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	var _reactAddons = __webpack_require__(2);
+
+	var _reactAddons2 = _interopRequireDefault(_reactAddons);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _underscore = __webpack_require__(4);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _reactFontawesome = __webpack_require__(6);
+
+	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
+	exports["default"] = _reactAddons2["default"].createClass({
+		displayName: "renderer",
+
+		getDefaultProps: function getDefaultProps() {
+			return {
+				data: null,
+				has_children: false
+			};
+		},
+
+		render: function render() {
+			var icon = 'file-o';
+
+			if (this.props.has_children) {
+				icon = 'folder-open';
+			}
+
+			return _reactAddons2["default"].createElement(
+				"div",
+				{ className: "propertree-node-desc" },
+				_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
+				_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: icon, fixedWidth: true }),
+				_reactAddons2["default"].createElement(
+					"span",
+					{ className: "propertree-node-name" },
+					this.props.data._label
+				)
+			);
+		}
+	});
+	module.exports = exports["default"];
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "renderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
