@@ -137,9 +137,24 @@ export default React.createClass({
 
 	handleSelect(selection) {
 		this.rebuildTree = true;
+		this.triggerSelect(selection);
 		this.setState({
 			selected: selection
 		});
+	},
+
+	triggerSelect(selection) {
+		let selectedNodes = [];
+		let findCond = {};
+
+		if (typeof this.props.onSelect === 'function') {
+			selectedNodes = _.map(selection, (id) => {
+				findCond[this.props.idField] = id;
+				return _.findWhere(this.props.data, findCond);
+			});
+
+			this.props.onSelect(selectedNodes);
+		}
 	},
 
 	renderNodes(data) {

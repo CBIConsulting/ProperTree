@@ -29,5 +29,7 @@ $(function () {
 		label: 'item-6'
 	}];
 
-	React.render(React.createElement(ProperTree, { data: data, collapsable: true, defaultExpanded: [5], defaultSelected: [5] }), body);
+	React.render(React.createElement(ProperTree, { data: data, collapsable: true, defaultExpanded: [5], defaultSelected: [5], onSelect: function (selection) {
+			console.log('selection', selection);
+		} }), body);
 });

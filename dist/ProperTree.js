@@ -246,13 +246,30 @@ var ProperTree =
 
 		handleSelect: function handleSelect(selection) {
 			this.rebuildTree = true;
+			this.triggerSelect(selection);
 			this.setState({
 				selected: selection
 			});
 		},
 
-		renderNodes: function renderNodes(data) {
+		triggerSelect: function triggerSelect(selection) {
 			var _this3 = this;
+
+			var selectedNodes = [];
+			var findCond = {};
+
+			if (typeof this.props.onSelect === 'function') {
+				selectedNodes = _underscore2["default"].map(selection, function (id) {
+					findCond[_this3.props.idField] = id;
+					return _underscore2["default"].findWhere(_this3.props.data, findCond);
+				});
+
+				this.props.onSelect(selectedNodes);
+			}
+		},
+
+		renderNodes: function renderNodes(data) {
+			var _this4 = this;
 
 			var result = [];
 			var Renderer = this.props.itemRenderer;
@@ -261,7 +278,7 @@ var ProperTree =
 				var children = [];
 
 				if (typeof item.children != 'undefined' && item.children.length) {
-					children = _this3.renderNodes(item.children);
+					children = _this4.renderNodes(item.children);
 				}
 
 				return _reactAddons2["default"].createElement(
@@ -269,12 +286,12 @@ var ProperTree =
 					{
 						collapsed: item._collapsed,
 						renderer: Renderer,
-						key: 'propertree-node-' + item[_this3.props.idField],
+						key: 'propertree-node-' + item[_this4.props.idField],
 						data: item,
-						selectable: _this3.props.selectable,
+						selectable: _this4.props.selectable,
 						selected: item._selected,
-						selection: _underscore2["default"].clone(_this3.state.selected),
-						onSelect: _this3.handleSelect
+						selection: _underscore2["default"].clone(_this4.state.selected),
+						onSelect: _this4.handleSelect
 					},
 					children
 				);
