@@ -774,13 +774,29 @@ var ProperTree =
 			});
 		},
 
-		handleSingleSelect: function handleSingleSelect() {
+		handleSingleSelect: function handleSingleSelect(e) {
 			var selection = this.getCurrentSelection() || [];
 
-			if (this.state.single) {
+			console.log('hola hola hola');
+
+			if (this.props.selected) {
 				selection = _underscore2["default"].without(selection, this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [];
+				}
 			} else {
 				selection.push(this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [this.props.data._properId];
+				}
+			}
+
+			console.log(this.props, this.props.selectable);
+
+			if (this.props.selectable == 'single') {
+				e.preventDefault();
 			}
 
 			selection = _underscore2["default"].uniq(selection);
@@ -788,7 +804,7 @@ var ProperTree =
 			clearSelection();
 
 			this.setState({
-				single: !this.state.single
+				single: !this.props.selected
 			});
 		},
 
@@ -847,6 +863,8 @@ var ProperTree =
 		triggerSelect: function triggerSelect() {
 			var selection = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
+			console.log(selection);
+
 			if (typeof this.props.onSelect == 'function') {
 				this.props.onSelect(selection);
 			}
@@ -855,31 +873,39 @@ var ProperTree =
 		render: function render() {
 			var selectors = [];
 
-			selectors.push(_reactAddons2["default"].createElement("input", { type: "checkbox", key: "cb-selector", className: "propertree-selector single", checked: this.props.selected, onChange: this.handleSingleSelect }));
+			if (this.props.selectable != 'single') {
+				selectors.push(_reactAddons2["default"].createElement("input", { type: "checkbox", key: "cb-selector", className: "propertree-selector single", checked: this.props.selected, onChange: this.handleSingleSelect }));
 
-			if (_underscore2["default"].isArray(this.props.data.children) && this.props.data.children.length) {
-				if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
-					selectors.push(_reactAddons2["default"].createElement(
-						"span",
-						{ key: "children-selector", className: "propertree-selector children" + (this.state.inmediate ? ' selected' : ''), onClick: this.handleChildrenSelect },
-						_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "long-arrow-down" })
-					));
+				if (_underscore2["default"].isArray(this.props.data.children) && this.props.data.children.length) {
+					if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
+						selectors.push(_reactAddons2["default"].createElement(
+							"span",
+							{ key: "children-selector", className: "propertree-selector children" + (this.state.inmediate ? ' selected' : ''), onClick: this.handleChildrenSelect },
+							_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "long-arrow-down" })
+						));
+					}
+
+					if (this.props.selectable == 'recursive') {
+						selectors.push(_reactAddons2["default"].createElement(
+							"span",
+							{ key: "hierarchy-selector", className: "propertree-selector recursive" + (this.state.recursive ? ' selected' : ''), onClick: this.handleRecursiveSelect },
+							_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "sort-amount-asc" })
+						));
+					}
 				}
 
-				if (this.props.selectable == 'recursive') {
-					selectors.push(_reactAddons2["default"].createElement(
-						"span",
-						{ key: "hierarchy-selector", className: "propertree-selector recursive" + (this.state.recursive ? ' selected' : ''), onClick: this.handleRecursiveSelect },
-						_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "sort-amount-asc" })
-					));
-				}
+				return _reactAddons2["default"].createElement(
+					"div",
+					{ className: "propertree-node-selectors" },
+					selectors
+				);
+			} else {
+				return _reactAddons2["default"].createElement(
+					"a",
+					{ href: "#", className: "propertree-single-selector" + (this.props.selected ? ' selected' : ''), onClick: this.handleSingleSelect },
+					"hola"
+				);
 			}
-
-			return _reactAddons2["default"].createElement(
-				"div",
-				{ className: "propertree-node-selectors" },
-				selectors
-			);
 		}
 	});
 	module.exports = exports["default"];

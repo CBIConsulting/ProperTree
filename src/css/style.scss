@@ -28,7 +28,7 @@
 			>.propertree-toggler {
 				@include inline-block(middle);
 				position: relative;
-				z-index: 1;
+				z-index: 2;
 
 				.fa {
 					font-size: 18px;
@@ -47,7 +47,7 @@
 
 				>span, >div {
 					position: relative;
-					z-index: 1;
+					z-index: 2;
 					@include inline-block(middle);
 
 					&.propertree-node-name {
@@ -82,9 +82,26 @@
 				}
 			}
 
+			>.propertree-single-selector {
+				position: absolute;
+				display: block;
+				top: 0;
+				left: 0;
+				width: 2800px;
+				height: 27px;
+				z-index: 1;
+				margin-left: -800px;
+
+				@include hide-text();
+
+				&:hover, &.selected {
+					background-color: #C7EBFF;
+				}
+			}
+
 			>.propertree-node-selectors {
 				position: relative;
-				z-index: 1;
+				z-index: 2;
 				@include inline-block(middle);
 
 				-webkit-user-select: none; /* webkit (safari, chrome) browsers */

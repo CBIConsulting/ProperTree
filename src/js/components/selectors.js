@@ -87,13 +87,25 @@ export default React.createClass({
 		});
 	},
 
-	handleSingleSelect() {
+	handleSingleSelect(e) {
 		let selection = this.getCurrentSelection() || [];
 
-		if (this.state.single) {
+		if (this.props.selected) {
 			selection = _.without(selection, this.props.data._properId);
+
+			if (this.props.selectable == 'single') {
+				selection = [];
+			}
 		} else {
 			selection.push(this.props.data._properId);
+
+			if (this.props.selectable == 'single') {
+				selection = [this.props.data._properId];
+			}
+		}
+
+		if (this.props.selectable == 'single') {
+			e.preventDefault();
 		}
 
 		selection = _.uniq(selection);
@@ -101,7 +113,7 @@ export default React.createClass({
 		clearSelection();
 
 		this.setState({
-			single: !this.state.single
+			single: !this.props.selected
 		});
 	},
 
@@ -163,24 +175,29 @@ export default React.createClass({
 	render() {
 		let selectors = [];
 
-		selectors.push(<input type="checkbox" key={"cb-selector"} className="propertree-selector single" checked={this.props.selected} onChange={this.handleSingleSelect} />);
+		if (this.props.selectable != 'single') {
+			selectors.push(<input type="checkbox" key={"cb-selector"} className="propertree-selector single" checked={this.props.selected} onChange={this.handleSingleSelect} />);
 
-		if (_.isArray(this.props.data.children) && this.props.data.children.length) {
-			if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
-				selectors.push(<span key={"children-selector"} className={"propertree-selector children"+(this.state.inmediate? ' selected' : '')} onClick={this.handleChildrenSelect}>
-					<Fa name="long-arrow-down" />
-				</span>);
+			if (_.isArray(this.props.data.children) && this.props.data.children.length) {
+				if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
+					selectors.push(<span key={"children-selector"} className={"propertree-selector children"+(this.state.inmediate? ' selected' : '')} onClick={this.handleChildrenSelect}>
+						<Fa name="long-arrow-down" />
+					</span>);
+				}
+
+				if (this.props.selectable == 'recursive') {
+					selectors.push(<span key={"hierarchy-selector"} className={"propertree-selector recursive"+(this.state.recursive? ' selected' : '')} onClick={this.handleRecursiveSelect}>
+						<Fa name="sort-amount-asc" />
+					</span>);
+				}
 			}
 
-			if (this.props.selectable == 'recursive') {
-				selectors.push(<span key={"hierarchy-selector"} className={"propertree-selector recursive"+(this.state.recursive? ' selected' : '')} onClick={this.handleRecursiveSelect}>
-					<Fa name="sort-amount-asc" />
-				</span>);
-			}
+			return <div className="propertree-node-selectors">
+				{selectors}
+			</div>;
+		} else {
+			return <a href="#" className={"propertree-single-selector" + (this.props.selected? ' selected' : '')} onClick={this.handleSingleSelect}>hola</a>
 		}
 
-		return <div className="propertree-node-selectors">
-			{selectors}
-		</div>;
 	}
 });
