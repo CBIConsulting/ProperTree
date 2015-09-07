@@ -3,6 +3,7 @@ import $ from "jquery";
 import _ from "underscore";
 import Fa from "react-fontawesome";
 import ItemRenderer from "./renderer";
+import Selectors from "./selectors";
 
 export default React.createClass({
 	getDefaultProps() {
@@ -11,7 +12,11 @@ export default React.createClass({
 			renderer: ItemRenderer,
 			collapsable: true,
 			collapsed: true,
-			onCollapseToggle: null
+			onCollapseToggle: null,
+			selectable: 'recursive',
+			selected: false,
+			onSelect: null,
+			selection: []
 		};
 	},
 
@@ -27,6 +32,12 @@ export default React.createClass({
 		this.setState({'collapsed': !this.state.collapsed});
 	},
 
+	handleSelect(selection) {
+		if (typeof this.props.onSelect == 'function') {
+			this.props.onSelect(selection);
+		}
+	},
+
 	render() {
 		let has_children = !!this.props.children.length;
 		let children = null;
@@ -34,6 +45,7 @@ export default React.createClass({
 		let Renderer = this.props.renderer;
 		let collapsedClass = 'collapsed';
 		let togglerIcon = <Fa name="caret-right" fixedWidth />;
+		let selectors = null;
 
 		if (!this.state.collapsed || !this.props.data._parent) {
 			collapsedClass = 'expanded';
@@ -57,8 +69,13 @@ export default React.createClass({
 			}
 		}
 
+		if (this.props.selectable) {
+			selectors = <Selectors {...this.props} key={"node-"+this.props.data._properId+'-selectors'} onSelect={this.handleSelect}/>;
+		}
+
 		return <li className={"propertree-node node-"+this.props.data._properId+' '+collapsedClass}>
 			{toggler}
+			{selectors}
 			<Renderer data={this.props.data} has_children={has_children} />
 			{children}
 		</li>;

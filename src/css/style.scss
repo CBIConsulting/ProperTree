@@ -28,7 +28,7 @@
 			>.propertree-toggler {
 				@include inline-block(middle);
 				position: relative;
-				z-index: 1;
+				z-index: 2;
 
 				.fa {
 					font-size: 18px;
@@ -47,7 +47,7 @@
 
 				>span, >div {
 					position: relative;
-					z-index: 1;
+					z-index: 2;
 					@include inline-block(middle);
 
 					&.propertree-node-name {
@@ -81,288 +81,63 @@
 					}
 				}
 			}
-		}
-	}
 
-}
+			>.propertree-single-selector {
+				position: absolute;
+				display: block;
+				top: 0;
+				left: 0;
+				width: 2800px;
+				height: 27px;
+				z-index: 1;
+				margin-left: -800px;
 
+				@include hide-text();
 
-//WIDGETS
-.cbiWidget, .cbi-widget {
+				&:hover, &.selected {
+					background-color: #C7EBFF;
+				}
+			}
 
-
-	//treeview
-	.widget-treeview {
-		margin: 0;
-		list-style-type: none;
-		overflow-x: hidden;
-
-		.selected {
-			background: transparent;
-		}
-
-		ul {
-			list-style-type: none;
-			margin: 0 0 0 20px;
-		}
-
-		>.tree-item {
-			overflow: hidden;
-		}
-
-		li {
-
-			&.tree-item {
+			>.propertree-node-selectors {
 				position: relative;
-				margin: 0;
-				padding: 0;
+				z-index: 2;
+				@include inline-block(middle);
 
-				>.tree-toggler {
-					position: absolute;
-					z-index: 1;
-					margin-top: 2px;
-				}
+				-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+				-moz-user-select: none; /* mozilla browsers */
+				-khtml-user-select: none; /* webkit (konqueror) browsers */
+				-ms-user-select: none; /* IE10+ */
 
-				>.item {
-					margin-left: 20px;
-					white-space: nowrap;
-					font-size: 13px;
-					.item-tx {
-					}
-				}
-
-				.item-bg {
-					position: absolute;
-					display: block;
-					width: 2800px;
-					height: 27px;
-					z-index: 0;
-					margin-left: -800px;
-				}
-				.item:hover {
-					.item-tx:hover {
-						//color: #fff;
-						i {
-							color: #2b849e;
-						}
-						.selectors {
-							i {
-								color: #fff;
-							}
-						}
-					}
-					.item-bg {
-						//background: lighten(#84C9EF, 5%);
-						background-color: #C7EBFF;
-					}
-					.item-bg:hover {
-						background: transparent;
-					}
-				}
-
-				&.context-visible {
-					>.item-bg {
-						background: darken(#F3F4F5, 5%);
-					}
-				}
-
-				&.selected {
-					>.item {
-						.item-tx {
-							color: #fff;
-							i {
-								color: #fff;
-							}
-						}
-						.item-bg {
-							background: #84C9EF;
-						}
-						.item-name {
-							font-weight: bold;
-						}
-					}
-					>.item:hover {
-						.item-tx:hover {
-							i {
-								color: #fff;
-							}
-						}
-						.item-bg:hover {
-							background: #84C9EF;
-						}
-					}
-				}
-
-				&.highlighted {
-					>.item-bg {
-						background: #e8e8e8;
-					}
-				}
-
-				i {
-					position: relative;
-				}
-
-				.icon-folder-open {
-					font-size: 18px;
-					position: relative;
-					top: 3px;
-					left: 3px;
-					color: #EDC478;
-				}
-
-				.icon-globe {
-					font-size: 18px;
-					color: #b3b3b3;
-					text-align: center;
-					width: 24px;
-					height: 18px;
-				}
-
-				.icon-group {
-					font-size: 18px;
-					color: #b3b3b3;
-					text-align: center;
-					width: 24px;
-					height: 18px;
-				}
-
-				.icon-book {
-					font-size: 18px;
-					color: #b3b3b3;
-					text-align: center;
-					width: 24px;
-					height: 18px;
-				}
-
-				.icon-superscript {
-					font-size: 18px;
-					color: #b3b3b3;
-					text-align: center;
-					width: 24px;
-					height: 18px;
-				}
-
-				.selectors {
+				.propertree-selector {
 					@include inline-block(middle);
-					line-height: 18px;
-					position: relative;
-					//border: 1px solid #ccc;
-					//background: #fff;
-					cursor: default;
-					padding-right: 3px;
-					margin-right: -3px;
-					margin-top: -3px;
+					@include border-radius(2px);
+					font-size: 10px;
+					line-height: 16px;
+					background-color: #ccc;
+					margin-right: 3px;
+					text-align: center;
+					width: 15px;
+					height: 16px;
+					color: #fff;
 
-					.selector {
-						width: 14px;
-						height: 16px;
-						text-align: center;
-						color: #777;
-						display: inline-block;
-						cursor: pointer;
+					-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+					-moz-user-select: none; /* mozilla browsers */
+					-khtml-user-select: none; /* webkit (konqueror) browsers */
+					-ms-user-select: none; /* IE10+ */
 
-						float: left;
-						border: 1px solid transparent;
-						margin-right: 3px;
-						@include border-radius(2px);
-
-						&.item-selector {
-							.checkbox-selector {
-								margin: 0;
-								margin-top: -1px;
-							}
-						}
-
-						i {
-							font-size: 10px;
-							color: #fff;
-							line-height: 16px;
-							width: 12px;
-						}
-
-						&.children-selector {
-							background-color: rgba(0, 0, 0, 0.2);
-						}
-
-						&.hierarchy-selector {
-							background-color: rgba(0, 0, 0, 0.2);
-						}
-
-						&.selected {
-							//color: #4D79FF;
-							background-color: #7EA7FF;
-
-							i {
-								color: #fff;
-							}
-						}
-
-						&:hover {
-							&.children-selector, &.hierarchy-selector {
-								color: #44558A;
-								background: #efefef;
-
-								i {
-									color: #555 !important;
-								}
-							}
-						}
+					&.selected {
+						background-color: #7EA7FF;
 					}
-
-					&.only-checkbox {
-						border: none;
-						background: none;
-
-						.selector:hover {
-							background: none;
-						}
-					}
-				}
-
-				.item-name {
-					position: relative;
-					display: inline-block;
-					width: 100%;
-					margin-left: -29px;
-					padding: 5px;
-					padding-left: 29px;
 
 					&:hover {
 						cursor: pointer;
+						color: #777;
+						background: lighten(#ccc, 10%);
 					}
 				}
 
-				.toggler-icon {
-					position: relative;
-					@extend .icon18;
-					text-decoration: none;
-					color: #555;
-					padding-left: 7px;
-					padding-top: 3px;
-
-					&:before {
-						@include single-transition(all, 0.25s);
-					}
-
-					//@extend .icon18-tree_arrow_right;
-				}
-
-				&.tree-opened {
-					>.tree-toggler {
-						>.toggler-icon {
-							&:before {
-								@include single-transition(all, 0.25s);
-								@include rotate(90deg);
-							}
-						}
-					}
-				}
 			}
 		}
-	}
-
-	.folders {
-
 	}
 }

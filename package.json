@@ -1,6 +1,6 @@
 {
   "name": "ProperTree",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A proper tree view for React",
   "scripts": {
     "test": "karma start --single-run --no-auto-watch karma.conf.js",

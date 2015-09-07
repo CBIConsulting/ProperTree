@@ -59,7 +59,7 @@ var ProperTree =
 
 	var _componentsTree2 = _interopRequireDefault(_componentsTree);
 
-	__webpack_require__(8);
+	__webpack_require__(9);
 
 	exports["default"] = _componentsTree2["default"];
 	module.exports = exports["default"];
@@ -134,7 +134,8 @@ var ProperTree =
 				collapsable: true,
 				uniqueId: _underscore2["default"].uniqueId('propertree-'),
 				defaultSelected: [],
-				defaultExpanded: []
+				defaultExpanded: [],
+				onSelect: null
 			};
 		},
 
@@ -166,13 +167,15 @@ var ProperTree =
 		},
 
 		shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-			this.rebuildTree = !_underscore2["default"].isEqual(nextProps.data, this.props.data);
+			this.rebuildTree = this.rebuildTree || !_underscore2["default"].isEqual(nextProps.data, this.props.data);
 
 			return true;
 		},
 
-		buildTree: function buildTree(data) {
+		buildTree: function buildTree() {
 			var _this = this;
+
+			var data = arguments.length <= 0 || arguments[0] === undefined ? this.props.data : arguments[0];
 
 			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, data, []));
 			var tree_data = null;
@@ -181,7 +184,7 @@ var ProperTree =
 			raw = _underscore2["default"].map(raw, function (item) {
 				item._properId = item[_this.props.idField];
 				item._parent = item[_this.props.parentField];
-				item._selected = false;
+				item._selected = _this.state.selected.indexOf(item._properId) >= 0;
 				item._label = item[_this.props.displayField];
 				item._collapsed = true && _this.props.collapsable;
 
@@ -207,6 +210,7 @@ var ProperTree =
 			tree_data = this.buildTreeData(raw);
 
 			this.setState({
+				expanded: expandedPaths,
 				rawdata: raw,
 				tree_data: tree_data
 			});
@@ -240,8 +244,32 @@ var ProperTree =
 			return result;
 		},
 
-		renderNodes: function renderNodes(data) {
+		handleSelect: function handleSelect(selection) {
+			this.rebuildTree = true;
+			this.triggerSelect(selection);
+			this.setState({
+				selected: selection
+			});
+		},
+
+		triggerSelect: function triggerSelect(selection) {
 			var _this3 = this;
+
+			var selectedNodes = [];
+			var findCond = {};
+
+			if (typeof this.props.onSelect === 'function') {
+				selectedNodes = _underscore2["default"].map(selection, function (id) {
+					findCond[_this3.props.idField] = id;
+					return _underscore2["default"].findWhere(_this3.props.data, findCond);
+				});
+
+				this.props.onSelect(selectedNodes);
+			}
+		},
+
+		renderNodes: function renderNodes(data) {
+			var _this4 = this;
 
 			var result = [];
 			var Renderer = this.props.itemRenderer;
@@ -250,12 +278,21 @@ var ProperTree =
 				var children = [];
 
 				if (typeof item.children != 'undefined' && item.children.length) {
-					children = _this3.renderNodes(item.children);
+					children = _this4.renderNodes(item.children);
 				}
 
 				return _reactAddons2["default"].createElement(
 					_node2["default"],
-					{ collapsed: item._collapsed, renderer: Renderer, key: 'propertree-node-' + item[_this3.props.idField], data: item },
+					{
+						collapsed: item._collapsed,
+						renderer: Renderer,
+						key: 'propertree-node-' + item[_this4.props.idField],
+						data: item,
+						selectable: _this4.props.selectable,
+						selected: item._selected,
+						selection: _underscore2["default"].clone(_this4.state.selected),
+						onSelect: _this4.handleSelect
+					},
 					children
 				);
 			});
@@ -331,6 +368,8 @@ var ProperTree =
 		value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 	var _reactAddons = __webpack_require__(2);
@@ -353,6 +392,10 @@ var ProperTree =
 
 	var _renderer2 = _interopRequireDefault(_renderer);
 
+	var _selectors = __webpack_require__(8);
+
+	var _selectors2 = _interopRequireDefault(_selectors);
+
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "node",
 
@@ -362,7 +405,11 @@ var ProperTree =
 				renderer: _renderer2["default"],
 				collapsable: true,
 				collapsed: true,
-				onCollapseToggle: null
+				onCollapseToggle: null,
+				selectable: 'recursive',
+				selected: false,
+				onSelect: null,
+				selection: []
 			};
 		},
 
@@ -378,6 +425,12 @@ var ProperTree =
 			this.setState({ 'collapsed': !this.state.collapsed });
 		},
 
+		handleSelect: function handleSelect(selection) {
+			if (typeof this.props.onSelect == 'function') {
+				this.props.onSelect(selection);
+			}
+		},
+
 		render: function render() {
 			var has_children = !!this.props.children.length;
 			var children = null;
@@ -385,6 +438,7 @@ var ProperTree =
 			var Renderer = this.props.renderer;
 			var collapsedClass = 'collapsed';
 			var togglerIcon = _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "caret-right", fixedWidth: true });
+			var selectors = null;
 
 			if (!this.state.collapsed || !this.props.data._parent) {
 				collapsedClass = 'expanded';
@@ -414,10 +468,15 @@ var ProperTree =
 				}
 			}
 
+			if (this.props.selectable) {
+				selectors = _reactAddons2["default"].createElement(_selectors2["default"], _extends({}, this.props, { key: "node-" + this.props.data._properId + '-selectors', onSelect: this.handleSelect }));
+			}
+
 			return _reactAddons2["default"].createElement(
 				"li",
 				{ className: "propertree-node node-" + this.props.data._properId + ' ' + collapsedClass },
 				toggler,
+				selectors,
 				_reactAddons2["default"].createElement(Renderer, { data: this.props.data, has_children: has_children }),
 				children
 			);
@@ -598,6 +657,263 @@ var ProperTree =
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	var _reactAddons = __webpack_require__(2);
+
+	var _reactAddons2 = _interopRequireDefault(_reactAddons);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _underscore = __webpack_require__(4);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _reactFontawesome = __webpack_require__(6);
+
+	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
+	function getDescendants(data) {
+		var inmediate = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+		var descendants = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+
+		if (_underscore2["default"].isArray(data.children) && data.children.length) {
+			descendants.push.apply(descendants, _underscore2["default"].pluck(data.children, '_properId'));
+
+			if (!inmediate) {
+				_underscore2["default"].each(data.children, function (child) {
+					getDescendants(child, inmediate, descendants);
+				});
+			}
+		}
+
+		return descendants;
+	}
+
+	function clearSelection() {
+		if (document.selection && document.selection.empty) {
+			document.selection.empty();
+		} else if (window.getSelection) {
+			var sel = window.getSelection();
+			sel.removeAllRanges();
+		}
+	}
+
+	exports["default"] = _reactAddons2["default"].createClass({
+		displayName: "selectors",
+
+		getDefaultProps: function getDefaultProps() {
+			return {
+				data: null,
+				selected: false,
+				selectable: 'recursive',
+				onSelect: null,
+				selection: []
+			};
+		},
+
+		getInitialState: function getInitialState() {
+			return {
+				single: this.props.selected,
+				inmediate: false,
+				recursive: false
+			};
+		},
+
+		componentDidMount: function componentDidMount() {
+			this.checkSelections();
+		},
+
+		componentDidUpdate: function componentDidUpdate() {
+			this.checkSelections();
+		},
+
+		shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+			return !_underscore2["default"].isEqual(nextProps, this.props) || !_underscore2["default"].isEqual(nextState, this.state);
+		},
+
+		checkSelections: function checkSelections() {
+			var inmediate = this.state.inmediate;
+			var recursive = this.state.recursive;
+			var included = false;
+			var children = [];
+			var descendants = [];
+
+			if (this.props.selectable == 'recursive' || this.props.selectable == 'children') {
+				descendants = getDescendants(this.props.data, true);
+				children = _underscore2["default"].clone(descendants);
+
+				if (this.props.selectable === 'recursive') {
+					descendants = getDescendants(this.props.data);
+				}
+			}
+
+			if (descendants.length) {
+				inmediate = _underscore2["default"].intersection(children, this.props.selection).length == children.length;
+
+				if (this.props.selectable == 'recursive') {
+					recursive = _underscore2["default"].intersection(descendants, this.props.selection).length == descendants.length;
+				}
+			}
+
+			this.setState({
+				inmediate: inmediate,
+				recursive: recursive
+			});
+		},
+
+		handleSingleSelect: function handleSingleSelect(e) {
+			var selection = this.getCurrentSelection() || [];
+
+			console.log('hola hola hola');
+
+			if (this.props.selected) {
+				selection = _underscore2["default"].without(selection, this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [];
+				}
+			} else {
+				selection.push(this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [this.props.data._properId];
+				}
+			}
+
+			console.log(this.props, this.props.selectable);
+
+			if (this.props.selectable == 'single') {
+				e.preventDefault();
+			}
+
+			selection = _underscore2["default"].uniq(selection);
+			this.triggerSelect(selection);
+			clearSelection();
+
+			this.setState({
+				single: !this.props.selected
+			});
+		},
+
+		getCurrentSelection: function getCurrentSelection() {
+			var data = arguments.length <= 0 || arguments[0] === undefined ? this.props.data : arguments[0];
+			var selection = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+			return _underscore2["default"].clone(this.props.selection);
+		},
+
+		handleChildrenSelect: function handleChildrenSelect() {
+			var children = getDescendants(this.props.data, true);
+			var inmediate = this.state.inmediate;
+			var selection = _underscore2["default"].clone(this.props.selection);
+			clearSelection();
+
+			if (!inmediate) {
+				selection.push.apply(selection, children);
+				selection = _underscore2["default"].uniq(selection);
+				inmediate = true;
+			} else {
+				selection = _underscore2["default"].without.apply(_underscore2["default"], selection, children);
+				inmediate = false;
+			}
+
+			this.triggerSelect(selection);
+
+			this.setState({
+				inmediate: inmediate
+			});
+		},
+
+		handleRecursiveSelect: function handleRecursiveSelect() {
+			var children = getDescendants(this.props.data);
+			var recursive = this.state.recursive;
+			var selection = _underscore2["default"].clone(this.props.selection);
+			clearSelection();
+
+			if (!recursive) {
+				selection.push.apply(selection, children);
+				selection = _underscore2["default"].uniq(selection);
+				recursive = true;
+			} else {
+				selection = _underscore2["default"].without.apply(_underscore2["default"], selection, children);
+				recursive = false;
+			}
+
+			this.triggerSelect(selection);
+
+			this.setState({
+				recursive: recursive,
+				inmediate: recursive
+			});
+		},
+
+		triggerSelect: function triggerSelect() {
+			var selection = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+			console.log(selection);
+
+			if (typeof this.props.onSelect == 'function') {
+				this.props.onSelect(selection);
+			}
+		},
+
+		render: function render() {
+			var selectors = [];
+
+			if (this.props.selectable != 'single') {
+				selectors.push(_reactAddons2["default"].createElement("input", { type: "checkbox", key: "cb-selector", className: "propertree-selector single", checked: this.props.selected, onChange: this.handleSingleSelect }));
+
+				if (_underscore2["default"].isArray(this.props.data.children) && this.props.data.children.length) {
+					if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
+						selectors.push(_reactAddons2["default"].createElement(
+							"span",
+							{ key: "children-selector", className: "propertree-selector children" + (this.state.inmediate ? ' selected' : ''), onClick: this.handleChildrenSelect },
+							_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "long-arrow-down" })
+						));
+					}
+
+					if (this.props.selectable == 'recursive') {
+						selectors.push(_reactAddons2["default"].createElement(
+							"span",
+							{ key: "hierarchy-selector", className: "propertree-selector recursive" + (this.state.recursive ? ' selected' : ''), onClick: this.handleRecursiveSelect },
+							_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "sort-amount-asc" })
+						));
+					}
+				}
+
+				return _reactAddons2["default"].createElement(
+					"div",
+					{ className: "propertree-node-selectors" },
+					selectors
+				);
+			} else {
+				return _reactAddons2["default"].createElement(
+					"a",
+					{ href: "#", className: "propertree-single-selector" + (this.props.selected ? ' selected' : ''), onClick: this.handleSingleSelect },
+					"hola"
+				);
+			}
+		}
+	});
+	module.exports = exports["default"];
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "selectors.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 9 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
