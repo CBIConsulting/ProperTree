@@ -90,7 +90,7 @@ export default React.createClass({
 	handleSingleSelect() {
 		let selection = this.getCurrentSelection() || [];
 
-		if (this.state.single) {
+		if (this.props.selected) {
 			selection = _.without(selection, this.props.data._properId);
 		} else {
 			selection.push(this.props.data._properId);
@@ -101,7 +101,7 @@ export default React.createClass({
 		clearSelection();
 
 		this.setState({
-			single: !this.state.single
+			single: !this.props.selected
 		});
 	},
 
