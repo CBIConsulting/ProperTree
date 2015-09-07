@@ -2305,176 +2305,54 @@ Copyright (c) 2015 Daniel Eden
           color: #b3b3b3; }
           .propertree .propertree-branch > .propertree-node > .propertree-node-desc .fa.fa-folder-open {
             color: #EDC478; }
-
-.cbiWidget .widget-treeview, .cbi-widget .widget-treeview {
-  margin: 0;
-  list-style-type: none;
-  overflow-x: hidden; }
-  .cbiWidget .widget-treeview .selected, .cbi-widget .widget-treeview .selected {
-    background: transparent; }
-  .cbiWidget .widget-treeview ul, .cbi-widget .widget-treeview ul {
-    list-style-type: none;
-    margin: 0 0 0 20px; }
-  .cbiWidget .widget-treeview > .tree-item, .cbi-widget .widget-treeview > .tree-item {
-    overflow: hidden; }
-  .cbiWidget .widget-treeview li.tree-item, .cbi-widget .widget-treeview li.tree-item {
-    position: relative;
-    margin: 0;
-    padding: 0; }
-    .cbiWidget .widget-treeview li.tree-item > .tree-toggler, .cbi-widget .widget-treeview li.tree-item > .tree-toggler {
-      position: absolute;
-      z-index: 1;
-      margin-top: 2px; }
-    .cbiWidget .widget-treeview li.tree-item > .item, .cbi-widget .widget-treeview li.tree-item > .item {
-      margin-left: 20px;
-      white-space: nowrap;
-      font-size: 13px; }
-    .cbiWidget .widget-treeview li.tree-item .item-bg, .cbi-widget .widget-treeview li.tree-item .item-bg {
-      position: absolute;
-      display: block;
-      width: 2800px;
-      height: 27px;
-      z-index: 0;
-      margin-left: -800px; }
-    .cbiWidget .widget-treeview li.tree-item .item:hover .item-tx:hover i, .cbi-widget .widget-treeview li.tree-item .item:hover .item-tx:hover i {
-      color: #2b849e; }
-    .cbiWidget .widget-treeview li.tree-item .item:hover .item-tx:hover .selectors i, .cbi-widget .widget-treeview li.tree-item .item:hover .item-tx:hover .selectors i {
-      color: #fff; }
-    .cbiWidget .widget-treeview li.tree-item .item:hover .item-bg, .cbi-widget .widget-treeview li.tree-item .item:hover .item-bg {
-      background-color: #C7EBFF; }
-    .cbiWidget .widget-treeview li.tree-item .item:hover .item-bg:hover, .cbi-widget .widget-treeview li.tree-item .item:hover .item-bg:hover {
-      background: transparent; }
-    .cbiWidget .widget-treeview li.tree-item.context-visible > .item-bg, .cbi-widget .widget-treeview li.tree-item.context-visible > .item-bg {
-      background: #e5e7e9; }
-    .cbiWidget .widget-treeview li.tree-item.selected > .item .item-tx, .cbi-widget .widget-treeview li.tree-item.selected > .item .item-tx {
-      color: #fff; }
-      .cbiWidget .widget-treeview li.tree-item.selected > .item .item-tx i, .cbi-widget .widget-treeview li.tree-item.selected > .item .item-tx i {
-        color: #fff; }
-    .cbiWidget .widget-treeview li.tree-item.selected > .item .item-bg, .cbi-widget .widget-treeview li.tree-item.selected > .item .item-bg {
-      background: #84C9EF; }
-    .cbiWidget .widget-treeview li.tree-item.selected > .item .item-name, .cbi-widget .widget-treeview li.tree-item.selected > .item .item-name {
-      font-weight: bold; }
-    .cbiWidget .widget-treeview li.tree-item.selected > .item:hover .item-tx:hover i, .cbi-widget .widget-treeview li.tree-item.selected > .item:hover .item-tx:hover i {
-      color: #fff; }
-    .cbiWidget .widget-treeview li.tree-item.selected > .item:hover .item-bg:hover, .cbi-widget .widget-treeview li.tree-item.selected > .item:hover .item-bg:hover {
-      background: #84C9EF; }
-    .cbiWidget .widget-treeview li.tree-item.highlighted > .item-bg, .cbi-widget .widget-treeview li.tree-item.highlighted > .item-bg {
-      background: #e8e8e8; }
-    .cbiWidget .widget-treeview li.tree-item i, .cbi-widget .widget-treeview li.tree-item i {
-      position: relative; }
-    .cbiWidget .widget-treeview li.tree-item .icon-folder-open, .cbi-widget .widget-treeview li.tree-item .icon-folder-open {
-      font-size: 18px;
-      position: relative;
-      top: 3px;
-      left: 3px;
-      color: #EDC478; }
-    .cbiWidget .widget-treeview li.tree-item .icon-globe, .cbi-widget .widget-treeview li.tree-item .icon-globe {
-      font-size: 18px;
-      color: #b3b3b3;
-      text-align: center;
-      width: 24px;
-      height: 18px; }
-    .cbiWidget .widget-treeview li.tree-item .icon-group, .cbi-widget .widget-treeview li.tree-item .icon-group {
-      font-size: 18px;
-      color: #b3b3b3;
-      text-align: center;
-      width: 24px;
-      height: 18px; }
-    .cbiWidget .widget-treeview li.tree-item .icon-book, .cbi-widget .widget-treeview li.tree-item .icon-book {
-      font-size: 18px;
-      color: #b3b3b3;
-      text-align: center;
-      width: 24px;
-      height: 18px; }
-    .cbiWidget .widget-treeview li.tree-item .icon-superscript, .cbi-widget .widget-treeview li.tree-item .icon-superscript {
-      font-size: 18px;
-      color: #b3b3b3;
-      text-align: center;
-      width: 24px;
-      height: 18px; }
-    .cbiWidget .widget-treeview li.tree-item .selectors, .cbi-widget .widget-treeview li.tree-item .selectors {
-      display: -moz-inline-stack;
-      display: inline-block;
-      vertical-align: middle;
-      *vertical-align: auto;
-      zoom: 1;
-      *display: inline;
-      line-height: 18px;
-      position: relative;
-      cursor: default;
-      padding-right: 3px;
-      margin-right: -3px;
-      margin-top: -3px; }
-      .cbiWidget .widget-treeview li.tree-item .selectors .selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector {
-        width: 14px;
-        height: 16px;
-        text-align: center;
-        color: #777;
+      .propertree .propertree-branch > .propertree-node > .propertree-node-selectors {
+        position: relative;
+        z-index: 1;
+        display: -moz-inline-stack;
         display: inline-block;
-        cursor: pointer;
-        float: left;
-        border: 1px solid transparent;
-        margin-right: 3px;
-        -webkit-border-radius: 2px;
-        -moz-border-radius: 2px;
-        -ms-border-radius: 2px;
-        -o-border-radius: 2px;
-        border-radius: 2px; }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector.item-selector .checkbox-selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector.item-selector .checkbox-selector {
-          margin: 0;
-          margin-top: -1px; }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector i, .cbi-widget .widget-treeview li.tree-item .selectors .selector i {
+        vertical-align: middle;
+        *vertical-align: auto;
+        zoom: 1;
+        *display: inline;
+        -webkit-user-select: none;
+        /* webkit (safari, chrome) browsers */
+        -moz-user-select: none;
+        /* mozilla browsers */
+        -khtml-user-select: none;
+        /* webkit (konqueror) browsers */
+        -ms-user-select: none;
+        /* IE10+ */ }
+        .propertree .propertree-branch > .propertree-node > .propertree-node-selectors .propertree-selector {
+          display: -moz-inline-stack;
+          display: inline-block;
+          vertical-align: middle;
+          *vertical-align: auto;
+          zoom: 1;
+          *display: inline;
+          -webkit-border-radius: 2px;
+          -moz-border-radius: 2px;
+          -ms-border-radius: 2px;
+          -o-border-radius: 2px;
+          border-radius: 2px;
           font-size: 10px;
-          color: #fff;
           line-height: 16px;
-          width: 12px; }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector.children-selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector.children-selector {
-          background-color: rgba(0, 0, 0, 0.2); }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector.hierarchy-selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector.hierarchy-selector {
-          background-color: rgba(0, 0, 0, 0.2); }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector.selected, .cbi-widget .widget-treeview li.tree-item .selectors .selector.selected {
-          background-color: #7EA7FF; }
-          .cbiWidget .widget-treeview li.tree-item .selectors .selector.selected i, .cbi-widget .widget-treeview li.tree-item .selectors .selector.selected i {
-            color: #fff; }
-        .cbiWidget .widget-treeview li.tree-item .selectors .selector:hover.children-selector, .cbiWidget .widget-treeview li.tree-item .selectors .selector:hover.hierarchy-selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector:hover.children-selector, .cbi-widget .widget-treeview li.tree-item .selectors .selector:hover.hierarchy-selector {
-          color: #44558A;
-          background: #efefef; }
-          .cbiWidget .widget-treeview li.tree-item .selectors .selector:hover.children-selector i, .cbiWidget .widget-treeview li.tree-item .selectors .selector:hover.hierarchy-selector i, .cbi-widget .widget-treeview li.tree-item .selectors .selector:hover.children-selector i, .cbi-widget .widget-treeview li.tree-item .selectors .selector:hover.hierarchy-selector i {
-            color: #555 !important; }
-      .cbiWidget .widget-treeview li.tree-item .selectors.only-checkbox, .cbi-widget .widget-treeview li.tree-item .selectors.only-checkbox {
-        border: none;
-        background: none; }
-        .cbiWidget .widget-treeview li.tree-item .selectors.only-checkbox .selector:hover, .cbi-widget .widget-treeview li.tree-item .selectors.only-checkbox .selector:hover {
-          background: none; }
-    .cbiWidget .widget-treeview li.tree-item .item-name, .cbi-widget .widget-treeview li.tree-item .item-name {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      margin-left: -29px;
-      padding: 5px;
-      padding-left: 29px; }
-      .cbiWidget .widget-treeview li.tree-item .item-name:hover, .cbi-widget .widget-treeview li.tree-item .item-name:hover {
-        cursor: pointer; }
-    .cbiWidget .widget-treeview li.tree-item .toggler-icon, .cbi-widget .widget-treeview li.tree-item .toggler-icon {
-      position: relative;
-      text-decoration: none;
-      color: #555;
-      padding-left: 7px;
-      padding-top: 3px; }
-      .cbiWidget .widget-treeview li.tree-item .toggler-icon:before, .cbi-widget .widget-treeview li.tree-item .toggler-icon:before {
-        -webkit-transition: all 0.25s false;
-        -webkit-transition-delay: 0s;
-        -moz-transition: all 0.25s false false;
-        -o-transition: all 0.25s false false;
-        transition: all 0.25s false false; }
-    .cbiWidget .widget-treeview li.tree-item.tree-opened > .tree-toggler > .toggler-icon:before, .cbi-widget .widget-treeview li.tree-item.tree-opened > .tree-toggler > .toggler-icon:before {
-      -webkit-transition: all 0.25s false;
-      -webkit-transition-delay: 0s;
-      -moz-transition: all 0.25s false false;
-      -o-transition: all 0.25s false false;
-      transition: all 0.25s false false;
-      -webkit-transform: rotate(90deg);
-      -moz-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-      -o-transform: rotate(90deg);
-      transform: rotate(90deg); }
+          background-color: #ccc;
+          margin-right: 3px;
+          text-align: center;
+          width: 15px;
+          height: 16px;
+          color: #fff;
+          -webkit-user-select: none;
+          /* webkit (safari, chrome) browsers */
+          -moz-user-select: none;
+          /* mozilla browsers */
+          -khtml-user-select: none;
+          /* webkit (konqueror) browsers */
+          -ms-user-select: none;
+          /* IE10+ */ }
+          .propertree .propertree-branch > .propertree-node > .propertree-node-selectors .propertree-selector.selected {
+            background-color: #7EA7FF; }
+          .propertree .propertree-branch > .propertree-node > .propertree-node-selectors .propertree-selector:hover {
+            cursor: pointer;
+            color: #777;
+            background: #e6e6e6; }

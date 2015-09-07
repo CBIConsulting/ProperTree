@@ -33,7 +33,8 @@ export default React.createClass({
 			collapsable: true,
 			uniqueId: _.uniqueId('propertree-'),
 			defaultSelected: [],
-			defaultExpanded: []
+			defaultExpanded: [],
+			onSelect: null
 		}
 	},
 
@@ -43,7 +44,7 @@ export default React.createClass({
 			mounted: false,
 			tree_data: null,
 			selected: _.clone(this.props.defaultSelected) || [],
-			expanded: _.clone(this.props.defaultExpanded) || []
+			expanded: _.clone(this.props.defaultExpanded) || [],
 		}
 	},
 
@@ -65,12 +66,12 @@ export default React.createClass({
 	},
 
 	shouldComponentUpdate(nextProps, nextState) {
-		this.rebuildTree = !_.isEqual(nextProps.data, this.props.data);
+		this.rebuildTree = this.rebuildTree || !_.isEqual(nextProps.data, this.props.data);
 
 		return true;
 	},
 
-	buildTree(data) {
+	buildTree(data = this.props.data) {
 		let raw = _.values($.extend(true, data, []));
 		let tree_data = null;
 		let expandedPaths = [];
@@ -78,7 +79,7 @@ export default React.createClass({
 		raw = _.map(raw, (item) => {
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
-			item._selected = false;
+			item._selected = this.state.selected.indexOf(item._properId) >= 0;
 			item._label = item[this.props.displayField];
 			item._collapsed = true && this.props.collapsable;
 
@@ -104,6 +105,7 @@ export default React.createClass({
 		tree_data = this.buildTreeData(raw);
 
 		this.setState({
+			expanded: expandedPaths,
 			rawdata: raw,
 			tree_data: tree_data
 		});
@@ -133,6 +135,13 @@ export default React.createClass({
 		return result;
 	},
 
+	handleSelect(selection) {
+		this.rebuildTree = true;
+		this.setState({
+			selected: selection
+		});
+	},
+
 	renderNodes(data) {
 		let result = [];
 		let Renderer = this.props.itemRenderer;
@@ -144,7 +153,16 @@ export default React.createClass({
 				children = this.renderNodes(item.children);
 			}
 
-			return <Node collapsed={item._collapsed} renderer={Renderer} key={'propertree-node-'+item[this.props.idField]} data={item}>
+			return <Node
+				collapsed={item._collapsed}
+				renderer={Renderer}
+				key={'propertree-node-'+item[this.props.idField]}
+				data={item}
+				selectable={this.props.selectable}
+				selected={item._selected}
+				selection={_.clone(this.state.selected)}
+				onSelect={this.handleSelect}
+			>
 				{children}
 			</Node>;
 		});

@@ -34,5 +34,5 @@ $(() => {
 		}
 	];
 
-	React.render(<ProperTree data={data} collapsable={true} defaultExpanded={[5]}/>, body);
+	React.render(<ProperTree data={data} collapsable={true} defaultExpanded={[5]} defaultSelected={[5]}/>, body);
 });
