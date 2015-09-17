@@ -59,7 +59,7 @@ var ProperTree =
 
 	var _componentsTree2 = _interopRequireDefault(_componentsTree);
 
-	__webpack_require__(9);
+	__webpack_require__(10);
 
 	exports["default"] = _componentsTree2["default"];
 	module.exports = exports["default"];
@@ -104,6 +104,10 @@ var ProperTree =
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 
+	var _iconRenderer = __webpack_require__(8);
+
+	var _iconRenderer2 = _interopRequireDefault(_iconRenderer);
+
 	function pathTo(data, node) {
 		var path = [];
 		var citem = undefined;
@@ -135,6 +139,7 @@ var ProperTree =
 				uniqueId: _underscore2["default"].uniqueId('propertree-'),
 				defaultSelected: [],
 				defaultExpanded: [],
+				iconRenderer: _iconRenderer2["default"],
 				onSelect: null
 			};
 		},
@@ -291,7 +296,8 @@ var ProperTree =
 						selectable: _this4.props.selectable,
 						selected: item._selected,
 						selection: _underscore2["default"].clone(_this4.state.selected),
-						onSelect: _this4.handleSelect
+						onSelect: _this4.handleSelect,
+						iconRenderer: _this4.props.iconRenderer
 					},
 					children
 				);
@@ -392,7 +398,7 @@ var ProperTree =
 
 	var _renderer2 = _interopRequireDefault(_renderer);
 
-	var _selectors = __webpack_require__(8);
+	var _selectors = __webpack_require__(9);
 
 	var _selectors2 = _interopRequireDefault(_selectors);
 
@@ -590,7 +596,6 @@ var ProperTree =
 	});
 	module.exports = exports['default'];
 
-
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
@@ -621,8 +626,71 @@ var ProperTree =
 
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 
+	var _iconRenderer = __webpack_require__(8);
+
+	var _iconRenderer2 = _interopRequireDefault(_iconRenderer);
+
 	exports["default"] = _reactAddons2["default"].createClass({
 		displayName: "renderer",
+
+		getDefaultProps: function getDefaultProps() {
+			return {
+				data: null,
+				has_children: false,
+				iconRenderer: _iconRenderer2["default"]
+			};
+		},
+
+		render: function render() {
+			return _reactAddons2["default"].createElement(
+				"div",
+				{ className: "propertree-node-desc" },
+				_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
+				_reactAddons2["default"].createElement(this.props.iconRenderer, this.props),
+				_reactAddons2["default"].createElement(
+					"span",
+					{ className: "propertree-node-name" },
+					this.props.data._label
+				)
+			);
+		}
+	});
+	module.exports = exports["default"];
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "renderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	var _reactAddons = __webpack_require__(2);
+
+	var _reactAddons2 = _interopRequireDefault(_reactAddons);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _underscore = __webpack_require__(4);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _reactFontawesome = __webpack_require__(6);
+
+	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
+	exports["default"] = _reactAddons2["default"].createClass({
+		displayName: "iconRenderer",
 
 		getDefaultProps: function getDefaultProps() {
 			return {
@@ -638,25 +706,15 @@ var ProperTree =
 				icon = 'folder-open';
 			}
 
-			return _reactAddons2["default"].createElement(
-				"div",
-				{ className: "propertree-node-desc" },
-				_reactAddons2["default"].createElement("div", { className: "propertree-node-bg" }),
-				_reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: icon, fixedWidth: true }),
-				_reactAddons2["default"].createElement(
-					"span",
-					{ className: "propertree-node-name" },
-					this.props.data._label
-				)
-			);
+			return _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: icon, fixedWidth: true });
 		}
 	});
 	module.exports = exports["default"];
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "renderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "iconRenderer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -777,8 +835,6 @@ var ProperTree =
 		handleSingleSelect: function handleSingleSelect(e) {
 			var selection = this.getCurrentSelection() || [];
 
-			console.log('hola hola hola');
-
 			if (this.props.selected) {
 				selection = _underscore2["default"].without(selection, this.props.data._properId);
 
@@ -792,8 +848,6 @@ var ProperTree =
 					selection = [this.props.data._properId];
 				}
 			}
-
-			console.log(this.props, this.props.selectable);
 
 			if (this.props.selectable == 'single') {
 				e.preventDefault();
@@ -863,8 +917,6 @@ var ProperTree =
 		triggerSelect: function triggerSelect() {
 			var selection = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
-			console.log(selection);
-
 			if (typeof this.props.onSelect == 'function') {
 				this.props.onSelect(selection);
 			}
@@ -900,11 +952,7 @@ var ProperTree =
 					selectors
 				);
 			} else {
-				return _reactAddons2["default"].createElement(
-					"a",
-					{ href: "#", className: "propertree-single-selector" + (this.props.selected ? ' selected' : ''), onClick: this.handleSingleSelect },
-					"hola"
-				);
+				return _reactAddons2["default"].createElement("a", { href: "#", className: "propertree-single-selector" + (this.props.selected ? ' selected' : ''), onClick: this.handleSingleSelect });
 			}
 		}
 	});
@@ -913,7 +961,7 @@ var ProperTree =
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/agazquez/git/ProperTree/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "selectors.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

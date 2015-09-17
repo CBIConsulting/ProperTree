@@ -4,6 +4,7 @@ import _ from "underscore";
 import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
+import IconRenderer from "./iconRenderer";
 
 function pathTo(data, node) {
 	let path = [];
@@ -34,6 +35,7 @@ export default React.createClass({
 			uniqueId: _.uniqueId('propertree-'),
 			defaultSelected: [],
 			defaultExpanded: [],
+			iconRenderer: IconRenderer,
 			onSelect: null
 		}
 	},
@@ -177,6 +179,7 @@ export default React.createClass({
 				selected={item._selected}
 				selection={_.clone(this.state.selected)}
 				onSelect={this.handleSelect}
+				iconRenderer={this.props.iconRenderer}
 			>
 				{children}
 			</Node>;

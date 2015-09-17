@@ -196,7 +196,7 @@ export default React.createClass({
 				{selectors}
 			</div>;
 		} else {
-			return <a href="#" className={"propertree-single-selector" + (this.props.selected? ' selected' : '')} onClick={this.handleSingleSelect}>hola</a>
+			return <a href="#" className={"propertree-single-selector" + (this.props.selected? ' selected' : '')} onClick={this.handleSingleSelect} />;
 		}
 
 	}
