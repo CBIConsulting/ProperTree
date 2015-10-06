@@ -72,7 +72,7 @@ export default React.createClass({
 	},
 
 	buildTree(data = this.props.data) {
-		let raw = _.values($.extend(true, data, []));
+		let raw = _.values($.extend(true, [], data));
 		let tree_data = null;
 		let expandedPaths = [];
 

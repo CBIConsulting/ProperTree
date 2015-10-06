@@ -177,7 +177,7 @@ var ProperTree =
 
 			var data = arguments.length <= 0 || arguments[0] === undefined ? this.props.data : arguments[0];
 
-			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, data, []));
+			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, [], data));
 			var tree_data = null;
 			var expandedPaths = [];
 
@@ -590,7 +590,6 @@ var ProperTree =
 	});
 	module.exports = exports['default'];
 
-
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
@@ -777,8 +776,6 @@ var ProperTree =
 		handleSingleSelect: function handleSingleSelect(e) {
 			var selection = this.getCurrentSelection() || [];
 
-			console.log('hola hola hola');
-
 			if (this.props.selected) {
 				selection = _underscore2["default"].without(selection, this.props.data._properId);
 
@@ -792,8 +789,6 @@ var ProperTree =
 					selection = [this.props.data._properId];
 				}
 			}
-
-			console.log(this.props, this.props.selectable);
 
 			if (this.props.selectable == 'single') {
 				e.preventDefault();
@@ -862,8 +857,6 @@ var ProperTree =
 
 		triggerSelect: function triggerSelect() {
 			var selection = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-
-			console.log(selection);
 
 			if (typeof this.props.onSelect == 'function') {
 				this.props.onSelect(selection);
