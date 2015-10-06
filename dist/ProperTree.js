@@ -182,7 +182,7 @@ var ProperTree =
 
 			var data = arguments.length <= 0 || arguments[0] === undefined ? this.props.data : arguments[0];
 
-			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, data, []));
+			var raw = _underscore2["default"].values(_jquery2["default"].extend(true, [], data));
 			var tree_data = null;
 			var expandedPaths = [];
 
