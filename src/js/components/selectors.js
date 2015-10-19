@@ -1,7 +1,7 @@
 import React from "react/addons";
-import $ from "jquery";
 import _ from "underscore";
 import Fa from "react-fontawesome";
+import equals from "equals";
 
 function getDescendants(data, inmediate = false, descendants = []) {
 	if (_.isArray(data.children) && data.children. length) {
@@ -27,6 +27,8 @@ function clearSelection() {
 }
 
 export default React.createClass({
+	mixins: [React.addons.PureRenderMixin],
+
 	getDefaultProps() {
 		return {
 			data: null,
@@ -51,10 +53,6 @@ export default React.createClass({
 
 	componentDidUpdate() {
 		this.checkSelections();
-	},
-
-	shouldComponentUpdate(nextProps, nextState) {
-		return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
 	},
 
 	checkSelections() {

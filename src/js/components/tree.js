@@ -1,10 +1,13 @@
 import React from "react/addons";
 import $ from "jquery";
 import _ from "underscore";
+import equals from "equals";
 import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
 import IconRenderer from "./iconRenderer";
+
+let iterations = 0;
 
 function pathTo(data, node) {
 	let path = [];
@@ -68,7 +71,7 @@ export default React.createClass({
 	},
 
 	shouldComponentUpdate(nextProps, nextState) {
-		this.rebuildTree = this.rebuildTree || !_.isEqual(nextProps.data, this.props.data);
+		this.rebuildTree = this.rebuildTree || !equals(nextProps.data, this.props.data);
 
 		return true;
 	},
@@ -113,17 +116,24 @@ export default React.createClass({
 		});
 	},
 
-	buildTreeData(tree, parent = null) {
+	buildTreeData(tree, parent = null, grouped = null) {
 		let result = [];
 		let findcond = {}
 		let branch = [];
 
-		findcond[this.props.parentField] = parent;
-		branch = _.where(tree, findcond);
+		if (!grouped) {
+			grouped = _.groupBy(tree, this.props.parentField);
+		}
 
-		if (branch.length) {
+		if (parent) {
+			branch = grouped[parent];
+		} else {
+			branch = grouped['null'];
+		}
+
+		if (branch && branch.length) {
 			result = _.map(branch, (leaf) => {
-				let children = this.buildTreeData(tree, leaf[this.props.idField]);
+				let children = this.buildTreeData(tree, leaf[this.props.idField], grouped);
 				let item = _.clone(leaf);
 
 				if (children.length) {
@@ -192,6 +202,7 @@ export default React.createClass({
 		let content = <div className="preloading">
 			<Fa name="spinner" spin size="2x" />
 		</div>;
+		let nodes = [];
 
 		if (this.state.mounted) {
 			if (!this.state.tree_data || !this.state.tree_data.length) {
@@ -199,9 +210,11 @@ export default React.createClass({
 					{this.props.emptyMsg}
 				</p>;
 			} else {
+
+				nodes = this.renderNodes(this.state.tree_data);
 				content = <div className="propertree-container">
 					<ul className="propertree-branch root">
-						{this.renderNodes(this.state.tree_data)}
+						{nodes}
 					</ul>
 				</div>;
 			}
