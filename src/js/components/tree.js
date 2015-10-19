@@ -13,6 +13,10 @@ function pathTo(data, node) {
 	let path = [];
 	let citem;
 
+	if (!node) {
+		return path;
+	}
+
 	citem = node;
 	path.push(citem._properId);
 

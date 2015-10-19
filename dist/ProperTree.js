@@ -118,6 +118,10 @@ var ProperTree =
 		var path = [];
 		var citem = undefined;
 
+		if (!node) {
+			return path;
+		}
+
 		citem = node;
 		path.push(citem._properId);
 
