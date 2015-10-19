@@ -55,6 +55,7 @@
           font-size: 18px;
           color: #777; }
       .propertree .propertree-branch > .propertree-node > .propertree-node-desc {
+        position: relative;
         line-height: 27px;
         display: -moz-inline-stack;
         display: inline-block;

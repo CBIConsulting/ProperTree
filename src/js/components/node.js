@@ -76,7 +76,7 @@ export default React.createClass({
 		return <li className={"propertree-node node-"+this.props.data._properId+' '+collapsedClass}>
 			{toggler}
 			{selectors}
-			<Renderer data={this.props.data} has_children={has_children} />
+			<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} onSelect={this.handleSelect} />
 			{children}
 		</li>;
 	}
