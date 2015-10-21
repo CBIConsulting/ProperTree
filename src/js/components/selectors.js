@@ -88,34 +88,36 @@ export default React.createClass({
 	handleSingleSelect(e) {
 		let selection = this.getCurrentSelection() || [];
 
-		if (this.props.selected) {
-			selection = _.without(selection, this.props.data._properId);
+		if (!this.props.data.disabled) {
+			if (this.props.selected) {
+				selection = _.without(selection, this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [];
+				}
+			} else {
+				selection.push(this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [this.props.data._properId];
+				}
+			}
 
 			if (this.props.selectable == 'single') {
-				selection = [];
+				e.preventDefault();
 			}
-		} else {
-			selection.push(this.props.data._properId);
 
-			if (this.props.selectable == 'single') {
-				selection = [this.props.data._properId];
-			}
+			selection = _.uniq(selection);
+			this.triggerSelect(selection);
+			clearSelection();
+
+			this.setState({
+				single: !this.props.selected
+			});
 		}
-
-		if (this.props.selectable == 'single') {
-			e.preventDefault();
-		}
-
-		selection = _.uniq(selection);
-		this.triggerSelect(selection);
-		clearSelection();
-
-		this.setState({
-			single: !this.props.selected
-		});
 	},
 
-	getCurrentSelection(data = this.props.data, selection = []) {
+	getCurrentSelection() {
 		return _.clone(this.props.selection);
 	},
 
@@ -124,6 +126,10 @@ export default React.createClass({
 		let inmediate = this.state.inmediate;
 		let selection = _.clone(this.props.selection);
 		clearSelection();
+
+		if (this.props.data.disabled) {
+			return ;
+		}
 
 		if (!inmediate) {
 			selection.push.apply(selection, children);
@@ -146,6 +152,10 @@ export default React.createClass({
 		let recursive = this.state.recursive;
 		let selection = _.clone(this.props.selection);
 		clearSelection();
+
+		if (this.props.data.disabled) {
+			return ;
+		}
 
 		if (!recursive) {
 			selection.push.apply(selection, children);

@@ -43,7 +43,8 @@ export default React.createClass({
 			defaultSelected: [],
 			defaultExpanded: [],
 			iconRenderer: IconRenderer,
-			onSelect: null
+			onSelect: null,
+			disabled: []
 		}
 	},
 
@@ -140,8 +141,14 @@ export default React.createClass({
 				let children = this.buildTreeData(tree, leaf[this.props.idField], grouped);
 				let item = _.clone(leaf);
 
+				item.disabled = false;
+
 				if (children.length) {
 					item.children = children;
+				}
+
+				if (_.indexOf(this.props.disabled, leaf[this.props.idField]) >= 0) {
+					item.disabled = true;
 				}
 
 				return item;

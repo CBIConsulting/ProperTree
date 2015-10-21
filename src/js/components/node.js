@@ -33,7 +33,7 @@ export default React.createClass({
 	},
 
 	handleSelect(selection) {
-		if (typeof this.props.onSelect == 'function') {
+		if (typeof this.props.onSelect == 'function' && !this.props.data.disabled) {
 			this.props.onSelect(selection);
 		}
 	},
@@ -46,14 +46,18 @@ export default React.createClass({
 		let collapsedClass = 'collapsed';
 		let togglerIcon = <Fa name="caret-right" fixedWidth />;
 		let selectors = null;
+		let disabledClass = '';
 
 		if (!this.state.collapsed || !this.props.data._parent) {
 			collapsedClass = 'expanded';
 			togglerIcon = <Fa name="caret-down" fixedWidth />;
 		}
 
-		if (has_children) {
+		if (this.props.data.disabled) {
+			disabledClass = 'disabled';
+		}
 
+		if (has_children) {
 			if (this.props.data._parent) {
 				toggler = <a href="#" onClick={this.handleTogglerClick} className="propertree-toggler">
 					{togglerIcon}
@@ -69,11 +73,11 @@ export default React.createClass({
 			}
 		}
 
-		if (this.props.selectable) {
+		if (this.props.selectable && !this.props.data.disabled) {
 			selectors = <Selectors {...this.props} key={"node-"+this.props.data._properId+'-selectors'} onSelect={this.handleSelect}/>;
 		}
 
-		return <li className={"propertree-node node-"+this.props.data._properId+' '+collapsedClass}>
+		return <li className={"propertree-node node-"+this.props.data._properId+' '+collapsedClass+' '+disabledClass}>
 			{toggler}
 			{selectors}
 			<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} onSelect={this.handleSelect} />
