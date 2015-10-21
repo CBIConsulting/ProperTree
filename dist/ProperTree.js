@@ -150,7 +150,8 @@ var ProperTree =
 				defaultSelected: [],
 				defaultExpanded: [],
 				iconRenderer: _iconRenderer2["default"],
-				onSelect: null
+				onSelect: null,
+				disabled: []
 			};
 		},
 
@@ -256,8 +257,14 @@ var ProperTree =
 					var children = _this2.buildTreeData(tree, leaf[_this2.props.idField], grouped);
 					var item = _underscore2["default"].clone(leaf);
 
+					item.disabled = false;
+
 					if (children.length) {
 						item.children = children;
+					}
+
+					if (_underscore2["default"].indexOf(_this2.props.disabled, leaf[_this2.props.idField]) >= 0) {
+						item.disabled = true;
 					}
 
 					return item;
@@ -643,7 +650,7 @@ var ProperTree =
 		},
 
 		handleSelect: function handleSelect(selection) {
-			if (typeof this.props.onSelect == 'function') {
+			if (typeof this.props.onSelect == 'function' && !this.props.data.disabled) {
 				this.props.onSelect(selection);
 			}
 		},
@@ -656,14 +663,18 @@ var ProperTree =
 			var collapsedClass = 'collapsed';
 			var togglerIcon = _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "caret-right", fixedWidth: true });
 			var selectors = null;
+			var disabledClass = '';
 
 			if (!this.state.collapsed || !this.props.data._parent) {
 				collapsedClass = 'expanded';
 				togglerIcon = _reactAddons2["default"].createElement(_reactFontawesome2["default"], { name: "caret-down", fixedWidth: true });
 			}
 
-			if (has_children) {
+			if (this.props.data.disabled) {
+				disabledClass = 'disabled';
+			}
 
+			if (has_children) {
 				if (this.props.data._parent) {
 					toggler = _reactAddons2["default"].createElement(
 						"a",
@@ -685,13 +696,13 @@ var ProperTree =
 				}
 			}
 
-			if (this.props.selectable) {
+			if (this.props.selectable && !this.props.data.disabled) {
 				selectors = _reactAddons2["default"].createElement(_selectors2["default"], _extends({}, this.props, { key: "node-" + this.props.data._properId + '-selectors', onSelect: this.handleSelect }));
 			}
 
 			return _reactAddons2["default"].createElement(
 				"li",
-				{ className: "propertree-node node-" + this.props.data._properId + ' ' + collapsedClass },
+				{ className: "propertree-node node-" + this.props.data._properId + ' ' + collapsedClass + ' ' + disabledClass },
 				toggler,
 				selectors,
 				_reactAddons2["default"].createElement(Renderer, { data: this.props.data, has_children: has_children, selectable: this.props.selectable, selection: this.props.selection, onSelect: this.handleSelect }),
@@ -1091,37 +1102,36 @@ var ProperTree =
 		handleSingleSelect: function handleSingleSelect(e) {
 			var selection = this.getCurrentSelection() || [];
 
-			if (this.props.selected) {
-				selection = _underscore2["default"].without(selection, this.props.data._properId);
+			if (!this.props.data.disabled) {
+				if (this.props.selected) {
+					selection = _underscore2["default"].without(selection, this.props.data._properId);
+
+					if (this.props.selectable == 'single') {
+						selection = [];
+					}
+				} else {
+					selection.push(this.props.data._properId);
+
+					if (this.props.selectable == 'single') {
+						selection = [this.props.data._properId];
+					}
+				}
 
 				if (this.props.selectable == 'single') {
-					selection = [];
+					e.preventDefault();
 				}
-			} else {
-				selection.push(this.props.data._properId);
 
-				if (this.props.selectable == 'single') {
-					selection = [this.props.data._properId];
-				}
+				selection = _underscore2["default"].uniq(selection);
+				this.triggerSelect(selection);
+				clearSelection();
+
+				this.setState({
+					single: !this.props.selected
+				});
 			}
-
-			if (this.props.selectable == 'single') {
-				e.preventDefault();
-			}
-
-			selection = _underscore2["default"].uniq(selection);
-			this.triggerSelect(selection);
-			clearSelection();
-
-			this.setState({
-				single: !this.props.selected
-			});
 		},
 
 		getCurrentSelection: function getCurrentSelection() {
-			var data = arguments.length <= 0 || arguments[0] === undefined ? this.props.data : arguments[0];
-			var selection = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
-
 			return _underscore2["default"].clone(this.props.selection);
 		},
 
@@ -1130,6 +1140,10 @@ var ProperTree =
 			var inmediate = this.state.inmediate;
 			var selection = _underscore2["default"].clone(this.props.selection);
 			clearSelection();
+
+			if (this.props.data.disabled) {
+				return;
+			}
 
 			if (!inmediate) {
 				selection.push.apply(selection, children);
@@ -1152,6 +1166,10 @@ var ProperTree =
 			var recursive = this.state.recursive;
 			var selection = _underscore2["default"].clone(this.props.selection);
 			clearSelection();
+
+			if (this.props.data.disabled) {
+				return;
+			}
 
 			if (!recursive) {
 				selection.push.apply(selection, children);
