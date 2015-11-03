@@ -170,6 +170,10 @@ var ProperTree =
 				this.buildTree(this.props.data);
 			}
 
+			if (this.state.selected) {
+				this.handleSelect(this.props.defaultSelected);
+			}
+
 			this.setState({
 				mounted: true
 			});
