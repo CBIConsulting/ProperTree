@@ -42,6 +42,7 @@
 			}
 
 			>.propertree-node-desc {
+				position: relative;
 				line-height: 27px;
 				@include inline-block(middle);
 

@@ -1,5 +1,5 @@
+import immutable from "immutable";
 import React from "react/addons";
-import $ from "jquery";
 import _ from "underscore";
 import Fa from "react-fontawesome";
 
@@ -27,6 +27,8 @@ function clearSelection() {
 }
 
 export default React.createClass({
+	mixins: [React.addons.PureRenderMixin],
+
 	getDefaultProps() {
 		return {
 			data: null,
@@ -53,16 +55,13 @@ export default React.createClass({
 		this.checkSelections();
 	},
 
-	shouldComponentUpdate(nextProps, nextState) {
-		return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
-	},
-
 	checkSelections() {
 		let inmediate = this.state.inmediate;
 		let recursive = this.state.recursive;
 		let included = false;
 		let children = [];
 		let descendants = [];
+		let selection = this.props.selection.toJS();
 
 		if (this.props.selectable == 'recursive' || this.props.selectable == 'children') {
 			descendants = getDescendants(this.props.data, true);
@@ -74,10 +73,10 @@ export default React.createClass({
 		}
 
 		if (descendants.length) {
-			inmediate = _.intersection(children, this.props.selection).length == children.length;
+			inmediate = _.intersection(children, selection).length == children.length;
 
 			if (this.props.selectable == 'recursive') {
-				recursive = _.intersection(descendants, this.props.selection).length == descendants.length;
+				recursive = _.intersection(descendants, selection).length == descendants.length;
 			}
 		}
 
@@ -90,53 +89,58 @@ export default React.createClass({
 	handleSingleSelect(e) {
 		let selection = this.getCurrentSelection() || [];
 
-		if (this.props.selected) {
-			selection = _.without(selection, this.props.data._properId);
+		if (!this.props.data.disabled) {
+			if (this.props.selected) {
+				selection = _.without(selection, this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [];
+				}
+			} else {
+				selection.push(this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [this.props.data._properId];
+				}
+			}
 
 			if (this.props.selectable == 'single') {
-				selection = [];
+				e.preventDefault();
 			}
-		} else {
-			selection.push(this.props.data._properId);
 
-			if (this.props.selectable == 'single') {
-				selection = [this.props.data._properId];
-			}
+			selection = _.uniq(selection);
+			this.triggerSelect(immutable.List(selection));
+			clearSelection();
+
+			this.setState({
+				single: !this.props.selected
+			});
 		}
-
-		if (this.props.selectable == 'single') {
-			e.preventDefault();
-		}
-
-		selection = _.uniq(selection);
-		this.triggerSelect(selection);
-		clearSelection();
-
-		this.setState({
-			single: !this.props.selected
-		});
 	},
 
-	getCurrentSelection(data = this.props.data, selection = []) {
-		return _.clone(this.props.selection);
+	getCurrentSelection() {
+		return this.props.selection.toJS();
 	},
 
 	handleChildrenSelect() {
 		let children = getDescendants(this.props.data, true);
 		let inmediate = this.state.inmediate;
-		let selection = _.clone(this.props.selection);
+		let selection = this.props.selection.toJS();
 		clearSelection();
 
+		if (this.props.data.disabled) {
+			return ;
+		}
+
 		if (!inmediate) {
-			selection.push.apply(selection, children);
-			selection = _.uniq(selection);
+			selection = _.union(selection, children);
 			inmediate = true;
 		} else {
-			selection = _.without.apply(_, selection, children);
+			selection = _.difference(selection, children);
 			inmediate = false;
 		}
 
-		this.triggerSelect(selection);
+		this.triggerSelect(immutable.List(selection));
 
 		this.setState({
 			inmediate: inmediate
@@ -146,19 +150,22 @@ export default React.createClass({
 	handleRecursiveSelect() {
 		let children = getDescendants(this.props.data);
 		let recursive = this.state.recursive;
-		let selection = _.clone(this.props.selection);
+		let selection = this.props.selection.toJS();
 		clearSelection();
 
+		if (this.props.data.disabled) {
+			return ;
+		}
+
 		if (!recursive) {
-			selection.push.apply(selection, children);
-			selection = _.uniq(selection);
+			selection = _.union(selection, children);
 			recursive = true;
 		} else {
-			selection = _.without.apply(_, selection, children);
+			selection = _.difference(selection, children);
 			recursive = false;
 		}
 
-		this.triggerSelect(selection);
+		this.triggerSelect(immutable.List(selection));
 
 		this.setState({
 			recursive: recursive,
@@ -168,7 +175,7 @@ export default React.createClass({
 
 	triggerSelect(selection = []) {
 		if (typeof this.props.onSelect == 'function') {
-			this.props.onSelect(selection);
+			this.props.onSelect(immutable.List(selection));
 		}
 	},
 
@@ -196,7 +203,7 @@ export default React.createClass({
 				{selectors}
 			</div>;
 		} else {
-			return <a href="#" className={"propertree-single-selector" + (this.props.selected? ' selected' : '')} onClick={this.handleSingleSelect}>hola</a>
+			return <a href="#" className={"propertree-single-selector" + (this.props.selected? ' selected' : '')} onClick={this.handleSingleSelect} />;
 		}
 
 	}
