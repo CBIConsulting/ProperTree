@@ -1,26 +1,63 @@
 import React from "react/addons";
-import $ from "jquery";
 import _ from "underscore";
 import Fa from "react-fontawesome";
+import IconRenderer from "./iconRenderer"
 
 export default React.createClass({
 	getDefaultProps() {
 		return {
 			data: null,
-			has_children: false
+			has_children: false,
+			iconRenderer: IconRenderer,
+			selectable: 'recursive',
+			selection: [],
+			onSelect: null
 		};
 	},
 
-	render() {
-		let icon = 'file-o';
+	handleSelection(e) {
+		e.stopPropagation();
 
-		if (this.props.has_children) {
-			icon = 'folder-open';
+		if (this.props.selectable == 'single') {
+			let selection = this.getCurrentSelection() || [];
+
+		if (this.props.selected) {
+			selection = _.without(selection, this.props.data._properId);
+
+			if (this.props.selectable == 'single') {
+					selection = [];
+				}
+			} else {
+				selection.push(this.props.data._properId);
+
+				if (this.props.selectable == 'single') {
+					selection = [this.props.data._properId];
+				}
+			}
+
+			if (this.props.selectable == 'single') {
+				e.preventDefault();
+			}
+
+			selection = _.uniq(selection);
+			this.triggerSelect(selection);
 		}
+	},
 
-		return <div className="propertree-node-desc">
+	triggerSelect(selection = []) {
+		if (typeof this.props.onSelect == 'function') {
+			this.props.onSelect(selection);
+		}
+	},
+
+	getCurrentSelection(data = this.props.data, selection = []) {
+		return _.clone(this.props.selection);
+	},
+
+	render() {
+		return <div className="propertree-node-desc" onClick={this.handleSelection}>
 			<div className="propertree-node-bg" />
-			<Fa name={icon} fixedWidth />
+			<this.props.iconRenderer {...this.props} />
 			<span className="propertree-node-name">
 				{this.props.data._label}
 			</span>

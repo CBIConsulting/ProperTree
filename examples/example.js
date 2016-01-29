@@ -31,5 +31,5 @@ $(function () {
 
 	React.render(React.createElement(ProperTree, { data: data, collapsable: true, defaultExpanded: [5], defaultSelected: [5], onSelect: function (selection) {
 			console.log('selection', selection);
-		} }), body);
+		} }), document.getElementById('tree-1'));
 });
