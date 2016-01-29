@@ -1,7 +1,6 @@
 import React from "react/addons";
-import $ from "jquery";
 import _ from "underscore";
-//import equals from "equals";
+import immutable from "immutable";
 import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
@@ -53,18 +52,19 @@ export default React.createClass({
 			rawdata: null,
 			mounted: false,
 			tree_data: null,
-			selected: _.clone(this.props.defaultSelected) || [],
+			selected: immutable.List(this.props.defaultSelected || []),
 			expanded: _.clone(this.props.defaultExpanded) || [],
 		}
 	},
 
 	componentDidMount() {
 		if (!this.state.mounted) {
-			this.buildTree(this.props.data);
+			let data = immutable.List(this.props.data);
+			this.buildTree(data);
 		}
 
 		if (this.state.selected) {
-			this.handleSelect(this.props.defaultSelected);
+			this.handleSelect(immutable.List(this.props.defaultSelected));
 		}
 
 		this.setState({
@@ -80,20 +80,21 @@ export default React.createClass({
 	},
 
 	shouldComponentUpdate(nextProps, nextState) {
-		this.rebuildTree = this.rebuildTree || JSON.stringify(nextProps.data) != JSON.stringify(this.props.data);
+		this.rebuildTree = this.rebuildTree || !immutable.List(nextProps.data).equals(immutable.List(this.props.data));
 
 		return true;
 	},
 
-	buildTree(data = this.props.data) {
-		let raw = data;
+	buildTree(data = immutable.List(this.props.data)) {
+		let raw = data.toJS();
 		let tree_data = null;
 		let expandedPaths = [];
+		let selection = this.state.selected.toJS();
 
 		raw = _.map(raw, (item) => {
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
-			item._selected = this.state.selected.indexOf(item._properId) >= 0;
+			item._selected = selection.indexOf(item._properId) >= 0;
 			item._label = item[this.props.displayField];
 			item._collapsed = true && this.props.collapsable;
 
@@ -120,8 +121,8 @@ export default React.createClass({
 
 		this.setState({
 			expanded: expandedPaths,
-			rawdata: raw,
-			tree_data: tree_data
+			rawdata: immutable.List(raw),
+			tree_data: immutable.List(tree_data)
 		});
 	},
 
@@ -165,6 +166,7 @@ export default React.createClass({
 	handleSelect(selection) {
 		this.rebuildTree = true;
 		this.triggerSelect(selection);
+
 		this.setState({
 			selected: selection
 		});
@@ -175,7 +177,7 @@ export default React.createClass({
 		let findCond = {};
 
 		if (typeof this.props.onSelect === 'function') {
-			selectedNodes = _.map(selection, (id) => {
+			selectedNodes = _.map(selection.toJS(), (id) => {
 				findCond[this.props.idField] = id;
 				return _.findWhere(this.props.data, findCond);
 			});
@@ -202,7 +204,7 @@ export default React.createClass({
 				data={item}
 				selectable={this.props.selectable}
 				selected={item._selected}
-				selection={_.clone(this.state.selected)}
+				selection={this.state.selected}
 				onSelect={this.handleSelect}
 				iconRenderer={this.props.iconRenderer}
 			>
@@ -220,13 +222,13 @@ export default React.createClass({
 		let nodes = [];
 
 		if (this.state.mounted) {
-			if (!this.state.tree_data || !this.state.tree_data.length) {
+			if (!this.state.tree_data || !this.state.tree_data.size) {
 				content = <p className="emptymsg muted text-muted">
 					{this.props.emptyMsg}
 				</p>;
 			} else {
 
-				nodes = this.renderNodes(this.state.tree_data);
+				nodes = this.renderNodes(this.state.tree_data.toJS());
 				content = <div className="propertree-container">
 					<ul className="propertree-branch root">
 						{nodes}

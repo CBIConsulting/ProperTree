@@ -1,5 +1,4 @@
 import React from "react/addons";
-import $ from "jquery";
 import _ from "underscore";
 import Fa from "react-fontawesome";
 import ItemRenderer from "./renderer";
