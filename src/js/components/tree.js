@@ -1,7 +1,7 @@
 import React from "react/addons";
 import $ from "jquery";
 import _ from "underscore";
-import equals from "equals";
+//import equals from "equals";
 import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
@@ -80,13 +80,13 @@ export default React.createClass({
 	},
 
 	shouldComponentUpdate(nextProps, nextState) {
-		this.rebuildTree = this.rebuildTree || !equals(nextProps.data, this.props.data);
+		this.rebuildTree = this.rebuildTree || JSON.stringify(nextProps.data) != JSON.stringify(this.props.data);
 
 		return true;
 	},
 
 	buildTree(data = this.props.data) {
-		let raw = _.values($.extend(true, [], data));
+		let raw = data;
 		let tree_data = null;
 		let expandedPaths = [];
 
@@ -198,7 +198,7 @@ export default React.createClass({
 			return <Node
 				collapsed={item._collapsed}
 				renderer={Renderer}
-				key={'propertree-node-'+item[this.props.idField]}
+				key={this.props.uniqueId+'-propertree-node-'+item[this.props.idField]}
 				data={item}
 				selectable={this.props.selectable}
 				selected={item._selected}
