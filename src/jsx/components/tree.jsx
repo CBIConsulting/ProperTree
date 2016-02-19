@@ -17,7 +17,6 @@ function pathTo(data, node) {
 	}
 
 	citem = node;
-	path.push(citem._properId);
 
 	while(citem._parent) {
 		path.push(citem._properId);
@@ -33,6 +32,7 @@ export default React.createClass({
 			data: null,
 			itemRenderer: ItemRenderer,
 			selectable: 'recursive',
+			searchable: false,
 			emptyMsg: 'No data found',
 			idField: 'id',
 			parentField: 'parent_id',
@@ -53,14 +53,13 @@ export default React.createClass({
 			mounted: false,
 			tree_data: null,
 			selected: immutable.List(this.props.defaultSelected || []),
-			expanded: _.clone(this.props.defaultExpanded) || [],
+			expanded: _.clone(this.props.defaultExpanded) || []
 		}
 	},
 
 	componentDidMount() {
 		if (!this.state.mounted) {
-			let data = immutable.List(this.props.data);
-			this.buildTree(data);
+			this.buildTree(this.props.data);
 		}
 
 		if (this.state.selected) {
@@ -85,13 +84,12 @@ export default React.createClass({
 		return true;
 	},
 
-	buildTree(data = immutable.List(this.props.data)) {
-		let raw = data.toJS();
+	buildTree(data = this.props.data) {
 		let tree_data = null;
 		let expandedPaths = [];
 		let selection = this.state.selected.toJS();
 
-		raw = _.map(raw, (item) => {
+		data = _.map(data, (item) => {
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
 			item._selected = selection.indexOf(item._properId) >= 0;
@@ -102,14 +100,19 @@ export default React.createClass({
 		});
 
 		_.each(this.state.expanded, (item) => {
-			let path = pathTo(raw, _.findWhere(raw, {_properId: item}));
-
-			expandedPaths.push.apply(expandedPaths, path);
+			let path = pathTo(data, _.findWhere(data, {_properId: item}));
+			if (path.length > 1) {
+				let children = _.findWhere(data, {_parent: item});
+				if (!children) {
+					path = _.rest(path);
+				}
+			}
+			expandedPaths = _.union(expandedPaths, path);
 		});
 
 		expandedPaths = _.uniq(expandedPaths);
 
-		raw = _.map(raw, (item) => {
+		data = _.map(data, (item) => {
 			if (expandedPaths.indexOf(item._properId) >= 0) {
 				item._collapsed = false;
 			}
@@ -117,11 +120,11 @@ export default React.createClass({
 			return item;
 		});
 
-		tree_data = this.buildTreeData(raw);
+		tree_data = this.buildTreeData(data);
 
 		this.setState({
 			expanded: expandedPaths,
-			rawdata: immutable.List(raw),
+			rawdata: immutable.List(data),
 			tree_data: immutable.List(tree_data)
 		});
 	},
@@ -186,6 +189,65 @@ export default React.createClass({
 		}
 	},
 
+	handleToggle(item_id) {
+		let nodes = this.state.rawdata.toJS();
+		let expanded = [];
+
+		_.each(nodes, (item) => {
+			if (item.id == item_id) {
+				item._collapsed = !item._collapsed;
+			}
+			if (!item._collapsed) {
+				expanded.push(item.id);
+			}
+		});
+
+		this.state.expanded = expanded;
+		this.buildTree(nodes);
+	},
+
+	handleSearch(event) {
+		const $this = $(event.target);
+		const searchString = $this.val();
+		const regex = new RegExp(searchString, 'i');
+		let resultIds = [];
+		let results = this.props.data;
+
+		if (searchString) {
+			if (!this.searching) {
+				this.searching = true;
+				this.lastExpanded = _.clone(this.state.expanded);
+			} 
+
+			let search = _.filter(this.props.data, (item) => {
+				return regex.test(item.label);
+			});
+
+			if (search.length) {
+				this.state.expanded = [];
+
+				_.each(search, (item) => {
+					resultIds.push(item.id);
+					this.state.expanded.push(item.id);
+					resultIds = _.union(resultIds, pathTo(this.props.data, item));
+				});
+
+				if (this.props.data.length) {
+					resultIds.push(this.props.data[0].id);
+				}
+			}
+
+			results = _.filter(this.props.data, (item) => {
+				return _.indexOf(resultIds, item.id) >= 0;
+			});
+		} else {
+			this.searching = false;
+			this.state.expanded = this.lastExpanded;
+		}
+
+		this.buildTree(results);
+	},
+
 	renderNodes(data) {
 		let result = [];
 		let Renderer = this.props.itemRenderer;
@@ -206,6 +268,7 @@ export default React.createClass({
 				selected={item._selected}
 				selection={this.state.selected}
 				onSelect={this.handleSelect}
+				onToggle={this.handleToggle}
 				iconRenderer={this.props.iconRenderer}
 			>
 				{children}
@@ -220,14 +283,23 @@ export default React.createClass({
 			<Fa name="spinner" spin size="2x" />
 		</div>;
 		let nodes = [];
+		let searchBox = null;
 
 		if (this.state.mounted) {
+			if (this.props.searchable) {
+				searchBox = (
+					<div className="toolbar">
+						<div className="right">
+							<input className="search-box" placeholder="Search..." onKeyUp={this.handleSearch}/>
+						</div>
+					</div>
+				);
+			}
 			if (!this.state.tree_data || !this.state.tree_data.size) {
 				content = <p className="emptymsg muted text-muted">
 					{this.props.emptyMsg}
 				</p>;
 			} else {
-
 				nodes = this.renderNodes(this.state.tree_data.toJS());
 				content = <div className="propertree-container">
 					<ul className="propertree-branch root">
@@ -238,6 +310,7 @@ export default React.createClass({
 		}
 
 		return <div className="propertree" id={this.props.uniqueId}>
+			{searchBox}
 			{content}
 		</div>;
 	}

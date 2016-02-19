@@ -183,7 +183,7 @@ export default React.createClass({
 		let selectors = [];
 
 		if (this.props.selectable != 'single') {
-			selectors.push(<input type="checkbox" key={"cb-selector"} className="propertree-selector single" checked={this.props.selected} onChange={this.handleSingleSelect} />);
+			selectors.push(<input type="checkbox" key={"cb-selector"} className="propertree-selector single" disabled={this.props.data.disabled} checked={this.props.selected} onChange={this.handleSingleSelect} />);
 
 			if (_.isArray(this.props.data.children) && this.props.data.children.length) {
 				if (this.props.selectable == 'recursive' || this.props.selectable == 'inmediate') {
