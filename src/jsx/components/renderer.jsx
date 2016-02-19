@@ -1,3 +1,4 @@
+import immutable from "immutable";
 import React from "react/addons";
 import _ from "underscore";
 import Fa from "react-fontawesome";
@@ -21,10 +22,10 @@ export default React.createClass({
 		if (this.props.selectable == 'single') {
 			let selection = this.getCurrentSelection() || [];
 
-		if (this.props.selected) {
-			selection = _.without(selection, this.props.data._properId);
+			if (this.props.selected) {
+				selection = _.without(selection, this.props.data._properId);
 
-			if (this.props.selectable == 'single') {
+				if (this.props.selectable == 'single') {
 					selection = [];
 				}
 			} else {
@@ -40,7 +41,7 @@ export default React.createClass({
 			}
 
 			selection = _.uniq(selection);
-			this.triggerSelect(selection);
+			this.triggerSelect(immutable.List(selection));
 		}
 	},
 
@@ -55,7 +56,7 @@ export default React.createClass({
 	},
 
 	render() {
-		return <div className="propertree-node-desc" onClick={this.handleSelection}>
+		return <div className={'propertree-node-desc ' + this.props.selectable} onClick={this.handleSelection}>
 			<div className="propertree-node-bg" />
 			<this.props.iconRenderer {...this.props} />
 			<span className="propertree-node-name">

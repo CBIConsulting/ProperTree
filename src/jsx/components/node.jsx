@@ -19,16 +19,19 @@ export default React.createClass({
 		};
 	},
 
-	getInitialState() {
+	/*getInitialState() {
 		return {
 			collapsed: this.props.collapsed
 		};
-	},
+	},*/
 
 	handleTogglerClick(e) {
 		e.preventDefault();
 
-		this.setState({'collapsed': !this.state.collapsed});
+		//this.setState({'collapsed': !this.state.collapsed});
+		if (typeof this.props.onToggle == 'function') {
+			this.props.onToggle(this.props.data.id);
+		}
 	},
 
 	handleSelect(selection) {
@@ -46,8 +49,9 @@ export default React.createClass({
 		let togglerIcon = <Fa name="caret-right" fixedWidth />;
 		let selectors = null;
 		let disabledClass = '';
+		let selectedClass = '';
 
-		if (!this.state.collapsed || !this.props.data._parent) {
+		if (!this.props.collapsed || !this.props.data._parent) {
 			collapsedClass = 'expanded';
 			togglerIcon = <Fa name="caret-down" fixedWidth />;
 		}
@@ -63,7 +67,7 @@ export default React.createClass({
 				</a>;
 			}
 
-			if (!this.state.collapsed || !this.props.data._parent) {
+			if (!this.props.collapsed || !this.props.data._parent) {
 				children = <div className="propertree-node-children">
 					<ul className="propertree-branch subtree">
 						{this.props.children}
@@ -72,14 +76,24 @@ export default React.createClass({
 			}
 		}
 
-		if (this.props.selectable && !this.props.data.disabled) {
+		if (!toggler) {
+			toggler = <span className="propertree-toggler-hole"/>;
+		}
+
+		if (this.props.selected) {
+			selectedClass = 'selected';
+		}
+
+		if (this.props.selectable) {
 			selectors = <Selectors {...this.props} key={"node-"+this.props.data._properId+'-selectors'} onSelect={this.handleSelect}/>;
 		}
 
 		return <li className={"propertree-node node-"+this.props.data._properId+' '+collapsedClass+' '+disabledClass}>
-			{toggler}
-			{selectors}
-			<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} onSelect={this.handleSelect} />
+			<div className={"propertree-item "+selectedClass}>
+				{toggler}
+				{selectors}
+				<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} onSelect={this.handleSelect} />
+			</div>
 			{children}
 		</li>;
 	}

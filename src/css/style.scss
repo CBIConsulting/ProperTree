@@ -4,11 +4,29 @@
 	position: relative;
 	display: block;
 	margin: 0;
-	padding: 10px;
+	//padding: 10px;
 	list-style-type: none;
 	overflow-x: hidden;
 
 	@import "./animate";
+
+	.toolbar {
+		background-color: #f5f5f5;
+		padding:5px;
+		overflow: auto;
+
+		.right {
+			float: right;
+		}
+
+		.search-box {
+			padding: 2px 6px;
+		}
+	}
+
+	.propertree-container {
+		padding: 10px;
+	}
 
 	.propertree-branch {
 		padding: 0;
@@ -17,6 +35,14 @@
 
 		&.root {
 			margin-left: 0;
+
+			>.propertree-node {
+				>.propertree-item {
+					>.propertree-toggler-hole {
+						width: 0;
+					}
+				}
+			}
 		}
 
 		>.propertree-node {
@@ -25,119 +51,180 @@
 			padding: 0;
 			line-height: 27px;
 
-			>.propertree-toggler {
-				@include inline-block(middle);
-				position: relative;
-				z-index: 2;
+			>.propertree-item {
+				>.propertree-toggler {
+					@include inline-block(middle);
+					position: relative;
+					z-index: 2;
 
-				.fa {
-					font-size: 18px;
-					color: #777;
+					.fa {
+						font-size: 18px;
+						color: #777;
+					}
 				}
-			}
 
-			>.propertree-node-children {
-				@extend .animated;
-				@extend .fadeIn;
-			}
+				>.propertree-toggler-hole {
+					@include inline-block(middle);
+					position: relative;
+					z-index: 2;
+					font-size: 18px;
+					width: 23px;
+					height: 20px;
+				}
+				
+				>.propertree-node-desc {
+					position: relative;
+					line-height: 27px;
+					@include inline-block(middle);
 
-			>.propertree-node-desc {
-				position: relative;
-				line-height: 27px;
-				@include inline-block(middle);
+					>span, >div {
+						position: relative;
+						z-index: 2;
+						@include inline-block(middle);
 
-				>span, >div {
+						&.propertree-node-name {
+							margin-left: 5px;
+						}
+					}
+
+					&.single {
+						cursor: pointer;
+					}
+
+					&.recursive {
+						cursor: default;
+					}
+
+					.propertree-node-bg {
+						position: absolute;
+						display: block;
+						width: 2800px;
+						height: 27px;
+						z-index: 0;
+						margin-left: -800px;
+					}
+
+					.fa {
+						font-size: 18px;
+						position: relative;
+						color: #b3b3b3;
+						margin-top: 2px;
+
+						&.fa-folder-open {
+							color: #EDC478;
+						}
+					}
+				}
+
+				>.propertree-single-selector {
+					position: absolute;
+					display: block;
+					top: 0;
+					left: 0;
+					width: 2800px;
+					height: 27px;
+					z-index: 1;
+					margin-left: -800px;
+					cursor: pointer;
+
+					@include hide-text();
+				}
+	
+				>.propertree-node-selectors {
 					position: relative;
 					z-index: 2;
 					@include inline-block(middle);
-
-					&.propertree-node-name {
-						margin-left: 5px;
-					}
-				}
-
-				.propertree-node-bg {
-					position: absolute;
-					display: block;
-					width: 2800px;
-					height: 27px;
-					z-index: 0;
-					margin-left: -800px;
-				}
-
-				&:hover {
-					.propertree-node-bg {
-						background-color: #C7EBFF;
-					}
-				}
-
-				.fa {
-					font-size: 18px;
-					position: relative;
-					position: relative;
-					color: #b3b3b3;
-
-					&.fa-folder-open {
-						color: #EDC478;
-					}
-				}
-			}
-
-			>.propertree-single-selector {
-				position: absolute;
-				display: block;
-				top: 0;
-				left: 0;
-				width: 2800px;
-				height: 27px;
-				z-index: 1;
-				margin-left: -800px;
-
-				@include hide-text();
-
-				&:hover, &.selected {
-					background-color: #C7EBFF;
-				}
-			}
-
-			>.propertree-node-selectors {
-				position: relative;
-				z-index: 2;
-				@include inline-block(middle);
-
-				-webkit-user-select: none; /* webkit (safari, chrome) browsers */
-				-moz-user-select: none; /* mozilla browsers */
-				-khtml-user-select: none; /* webkit (konqueror) browsers */
-				-ms-user-select: none; /* IE10+ */
-
-				.propertree-selector {
-					@include inline-block(middle);
-					@include border-radius(2px);
-					font-size: 10px;
-					line-height: 16px;
-					background-color: #ccc;
-					margin-right: 3px;
-					text-align: center;
-					width: 15px;
-					height: 16px;
-					color: #fff;
+    				height: 29px;
 
 					-webkit-user-select: none; /* webkit (safari, chrome) browsers */
 					-moz-user-select: none; /* mozilla browsers */
 					-khtml-user-select: none; /* webkit (konqueror) browsers */
 					-ms-user-select: none; /* IE10+ */
 
-					&.selected {
-						background-color: #7EA7FF;
-					}
+					.propertree-selector {
+						@include inline-block(middle);
+						@include border-radius(2px);
+						font-size: 10px;
+						line-height: 16px;
+						background-color: #ccc;
+						margin-right: 3px;
+						text-align: center;
+						width: 15px;
+						height: 16px;
+						color: #fff;
 
-					&:hover {
-						cursor: pointer;
-						color: #777;
-						background: lighten(#ccc, 10%);
+						-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+						-moz-user-select: none; /* mozilla browsers */
+						-khtml-user-select: none; /* webkit (konqueror) browsers */
+						-ms-user-select: none; /* IE10+ */
+
+						&.selected {
+							background-color: #7EA7FF;
+						}
+
+						&:hover {
+							cursor: pointer;
+							color: #777;
+							background: lighten(#ccc, 10%);
+						}
+					}
+					input[type=checkbox] {
+						margin-top: 1px;
 					}
 				}
 
+				&:hover {
+					.propertree-single-selector, 
+					.propertree-node-desc {
+						.propertree-node-bg {
+							background-color: #EBF8FF;
+						}
+						.fa {
+							color: #8698B5;
+						}
+					}
+				}
+
+				&.selected {
+					.propertree-single-selector {
+						background-color: #C7EBFF;
+					}
+					.propertree-node-desc.single {
+						.fa {
+							color: #8698B5;
+						}
+					}
+				}
+			}
+
+
+			>.propertree-node-children {
+				@extend .animated;
+				@extend .fadeIn;
+			}
+
+			&.disabled {
+				>.propertree-item {
+					>.propertree-node-selectors {
+						.propertree-selector {
+							background: #ddd;
+							color: #fff;
+							cursor: default;
+						}
+					}
+					>.propertree-node-desc {
+						.propertree-node-name {
+							color: #bbb;
+						}
+						.fa {
+							color: #ddd;
+						}
+
+						&.single {
+							cursor: default;
+						}
+					}
+				}
 			}
 		}
 	}
