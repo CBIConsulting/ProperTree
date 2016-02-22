@@ -30,7 +30,7 @@ export default React.createClass({
 
 		//this.setState({'collapsed': !this.state.collapsed});
 		if (typeof this.props.onToggle == 'function') {
-			this.props.onToggle(this.props.data.id);
+			this.props.onToggle(this.props.data._properId);
 		}
 	},
 

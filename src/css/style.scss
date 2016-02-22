@@ -52,6 +52,9 @@
 			line-height: 27px;
 
 			>.propertree-item {
+				white-space: nowrap;
+				overflow: hidden;
+
 				>.propertree-toggler {
 					@include inline-block(middle);
 					position: relative;

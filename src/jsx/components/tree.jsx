@@ -18,7 +18,7 @@ function pathTo(data, node) {
 
 	citem = node;
 
-	while(citem._parent) {
+	while(citem && citem._parent) {
 		path.push(citem._properId);
 		citem = _.findWhere(data, {_properId: citem._parent});
 	}
@@ -194,11 +194,11 @@ export default React.createClass({
 		let expanded = [];
 
 		_.each(nodes, (item) => {
-			if (item.id == item_id) {
+			if (item._properId == item_id) {
 				item._collapsed = !item._collapsed;
 			}
 			if (!item._collapsed) {
-				expanded.push(item.id);
+				expanded.push(item._properId);
 			}
 		});
 
@@ -209,36 +209,40 @@ export default React.createClass({
 	handleSearch(event) {
 		const $this = $(event.target);
 		const searchString = $this.val();
-		const regex = new RegExp(searchString, 'i');
+		this.search(searchString);
+	},
+
+	search: _.debounce(function(searchString) {
 		let resultIds = [];
 		let results = this.props.data;
 
 		if (searchString) {
+			const regex = new RegExp(searchString, 'i');
 			if (!this.searching) {
 				this.searching = true;
 				this.lastExpanded = _.clone(this.state.expanded);
 			} 
 
 			let search = _.filter(this.props.data, (item) => {
-				return regex.test(item.label);
+				return regex.test(item._label);
 			});
 
 			if (search.length) {
 				this.state.expanded = [];
 
 				_.each(search, (item) => {
-					resultIds.push(item.id);
-					this.state.expanded.push(item.id);
+					resultIds.push(item._properId);
+					this.state.expanded.push(item._properId);
 					resultIds = _.union(resultIds, pathTo(this.props.data, item));
 				});
 
 				if (this.props.data.length) {
-					resultIds.push(this.props.data[0].id);
+					resultIds.push(this.props.data[0]._properId);
 				}
 			}
 
 			results = _.filter(this.props.data, (item) => {
-				return _.indexOf(resultIds, item.id) >= 0;
+				return _.indexOf(resultIds, item._properId) >= 0;
 			});
 		} else {
 			this.searching = false;
@@ -246,7 +250,7 @@ export default React.createClass({
 		}
 
 		this.buildTree(results);
-	},
+	},300),
 
 	renderNodes(data) {
 		let result = [];
