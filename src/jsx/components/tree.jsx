@@ -216,7 +216,7 @@ export default React.createClass({
 		let resultIds = [];
 		let results = this.props.data;
 
-		if (searchString) {
+		if (searchString && searchString.length > 2) {
 			const regex = new RegExp(searchString, 'i');
 			if (!this.searching) {
 				this.searching = true;
@@ -245,8 +245,10 @@ export default React.createClass({
 				return _.indexOf(resultIds, item._properId) >= 0;
 			});
 		} else {
-			this.searching = false;
-			this.state.expanded = this.lastExpanded;
+			if (this.searching) {
+				this.searching = false;
+				this.state.expanded = this.lastExpanded;
+			}
 		}
 
 		this.buildTree(results);
