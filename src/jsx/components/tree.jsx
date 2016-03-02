@@ -1,27 +1,25 @@
 import React from "react/addons";
 import _ from "underscore";
 import immutable from "immutable";
+import SearchBox from "./searchBox";
 import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
 import IconRenderer from "./iconRenderer";
 
-let iterations = 0;
-
 function pathTo(data, node) {
 	let path = [];
-	let citem;
+	let citem = _.clone(node);
 
 	if (!node) {
 		return path;
 	}
 
-	citem = node;
-
 	while(citem && citem._parent) {
 		path.push(citem._properId);
 		citem = _.findWhere(data, {_properId: citem._parent});
 	}
+	path.push(citem._properId);
 
 	return _.uniq(path);
 }
@@ -34,6 +32,7 @@ export default React.createClass({
 			selectable: 'recursive',
 			searchable: false,
 			emptyMsg: 'No data found',
+			searchMsg: 'Search...',
 			idField: 'id',
 			parentField: 'parent_id',
 			displayField: 'label',
@@ -51,7 +50,7 @@ export default React.createClass({
 		return {
 			rawdata: null,
 			mounted: false,
-			tree_data: null,
+			treeData: null,
 			selected: immutable.List(this.props.defaultSelected || []),
 			expanded: _.clone(this.props.defaultExpanded) || []
 		}
@@ -59,7 +58,8 @@ export default React.createClass({
 
 	componentDidMount() {
 		if (!this.state.mounted) {
-			this.buildTree(this.props.data);
+			this.prepareData();
+			this.buildTree();
 		}
 
 		if (this.state.selected) {
@@ -73,6 +73,7 @@ export default React.createClass({
 
 	componentDidUpdate() {
 		if (this.rebuildTree) {
+			this.prepareData();
 			this.buildTree();
 			this.rebuildTree = false;
 		}
@@ -84,12 +85,12 @@ export default React.createClass({
 		return true;
 	},
 
-	buildTree(data = this.props.data) {
-		let tree_data = null;
-		let expandedPaths = [];
+	prepareData(data = this.props.data) {
 		let selection = this.state.selected.toJS();
 
-		data = _.map(data, (item) => {
+		data = $.extend(true, {}, data);
+
+		this._baseData = _.map(data, (item) => {
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
 			item._selected = selection.indexOf(item._properId) >= 0;
@@ -98,6 +99,12 @@ export default React.createClass({
 
 			return item;
 		});
+	},
+
+	buildTree(data = this._baseData) {
+		let treeData = null;
+		let expandedPaths = [];
+		let selection = this.state.selected.toJS();
 
 		_.each(this.state.expanded, (item) => {
 			let path = pathTo(data, _.findWhere(data, {_properId: item}));
@@ -120,12 +127,12 @@ export default React.createClass({
 			return item;
 		});
 
-		tree_data = this.buildTreeData(data);
+		treeData = this.buildTreeData(data);
 
 		this.setState({
 			expanded: expandedPaths,
 			rawdata: immutable.List(data),
-			tree_data: immutable.List(tree_data)
+			treeData: immutable.List(treeData)
 		});
 	},
 
@@ -170,6 +177,13 @@ export default React.createClass({
 		this.rebuildTree = true;
 		this.triggerSelect(selection);
 
+		if (this.props.searchable && this.refs.searchBox) {
+			const expanded = this.refs.searchBox.getExpanded(selection.toJS());
+			if (expanded) {
+				this.state.expanded = expanded;
+			}
+		}
+
 		this.setState({
 			selected: selection
 		});
@@ -182,7 +196,7 @@ export default React.createClass({
 		if (typeof this.props.onSelect === 'function') {
 			selectedNodes = _.map(selection.toJS(), (id) => {
 				findCond[this.props.idField] = id;
-				return _.findWhere(this.props.data, findCond);
+				return _.findWhere(this._baseData, findCond);
 			});
 
 			this.props.onSelect(selectedNodes);
@@ -205,54 +219,6 @@ export default React.createClass({
 		this.state.expanded = expanded;
 		this.buildTree(nodes);
 	},
-
-	handleSearch(event) {
-		const $this = $(event.target);
-		const searchString = $this.val();
-		this.search(searchString);
-	},
-
-	search: _.debounce(function(searchString) {
-		let resultIds = [];
-		let results = this.props.data;
-
-		if (searchString && searchString.length > 2) {
-			const regex = new RegExp(searchString, 'i');
-			if (!this.searching) {
-				this.searching = true;
-				this.lastExpanded = _.clone(this.state.expanded);
-			} 
-
-			let search = _.filter(this.props.data, (item) => {
-				return regex.test(item._label);
-			});
-
-			if (search.length) {
-				this.state.expanded = [];
-
-				_.each(search, (item) => {
-					resultIds.push(item._properId);
-					this.state.expanded.push(item._properId);
-					resultIds = _.union(resultIds, pathTo(this.props.data, item));
-				});
-
-				if (this.props.data.length) {
-					resultIds.push(this.props.data[0]._properId);
-				}
-			}
-
-			results = _.filter(this.props.data, (item) => {
-				return _.indexOf(resultIds, item._properId) >= 0;
-			});
-		} else {
-			if (this.searching) {
-				this.searching = false;
-				this.state.expanded = this.lastExpanded;
-			}
-		}
-
-		this.buildTree(results);
-	},300),
 
 	renderNodes(data) {
 		let result = [];
@@ -284,6 +250,11 @@ export default React.createClass({
 		return result;
 	},
 
+	afterSearch(results, expanded) {
+		this.state.expanded = expanded;
+		this.buildTree(results);
+	},
+
 	render() {
 		let content = <div className="preloading">
 			<Fa name="spinner" spin size="2x" />
@@ -294,19 +265,21 @@ export default React.createClass({
 		if (this.state.mounted) {
 			if (this.props.searchable) {
 				searchBox = (
-					<div className="toolbar">
-						<div className="right">
-							<input className="search-box" placeholder="Search..." onKeyUp={this.handleSearch}/>
-						</div>
-					</div>
+					<SearchBox
+						ref="searchBox"
+						searchMsg={this.props.searchMsg}
+						data={this._baseData}
+						expanded={this.state.expanded}
+						afterSearch={this.afterSearch}
+					/>
 				);
 			}
-			if (!this.state.tree_data || !this.state.tree_data.size) {
+			if (!this.state.treeData || !this.state.treeData.size) {
 				content = <p className="emptymsg muted text-muted">
 					{this.props.emptyMsg}
 				</p>;
 			} else {
-				nodes = this.renderNodes(this.state.tree_data.toJS());
+				nodes = this.renderNodes(this.state.treeData.toJS());
 				content = <div className="propertree-container">
 					<ul className="propertree-branch root">
 						{nodes}

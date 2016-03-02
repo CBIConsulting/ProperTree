@@ -6,26 +6,37 @@
 	margin: 0;
 	//padding: 10px;
 	list-style-type: none;
-	overflow-x: hidden;
+	//overflow-x: hidden;
 
 	@import "./animate";
 
 	.toolbar {
-		background-color: #f5f5f5;
-		padding:5px;
-		overflow: auto;
-
-		.right {
-			float: right;
-		}
+		position: relative;
 
 		.search-box {
 			padding: 2px 6px;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.clear {
+			position: absolute;
+			top: 0;
+			right: 0;
+			padding: 7px;
+			line-height: 1;
+			color: #999;
+			cursor: pointer;
+
+			&:hover {
+				color: #777;
+			}
 		}
 	}
 
 	.propertree-container {
 		padding: 10px;
+		overflow-x: hidden;
 	}
 
 	.propertree-branch {
@@ -53,12 +64,12 @@
 
 			>.propertree-item {
 				white-space: nowrap;
-				overflow: hidden;
+				//overflow: hidden;
 
 				>.propertree-toggler {
 					@include inline-block(middle);
 					position: relative;
-					z-index: 2;
+					z-index: 4;
 
 					.fa {
 						font-size: 18px;
@@ -126,7 +137,7 @@
 					left: 0;
 					width: 2800px;
 					height: 27px;
-					z-index: 1;
+					z-index: 3;
 					margin-left: -800px;
 					cursor: pointer;
 
@@ -177,7 +188,6 @@
 				}
 
 				&:hover {
-					.propertree-single-selector, 
 					.propertree-node-desc {
 						.propertree-node-bg {
 							background-color: #EBF8FF;
@@ -189,10 +199,10 @@
 				}
 
 				&.selected {
-					.propertree-single-selector {
-						background-color: #C7EBFF;
-					}
 					.propertree-node-desc.single {
+						.propertree-node-bg {
+							background-color: #C7EBFF;
+						}
 						.fa {
 							color: #8698B5;
 						}

@@ -16,35 +16,6 @@ export default React.createClass({
 		};
 	},
 
-	handleSelection(e) {
-		e.stopPropagation();
-
-		if (this.props.selectable == 'single') {
-			let selection = this.getCurrentSelection() || [];
-
-			if (this.props.selected) {
-				selection = _.without(selection, this.props.data._properId);
-
-				if (this.props.selectable == 'single') {
-					selection = [];
-				}
-			} else {
-				selection.push(this.props.data._properId);
-
-				if (this.props.selectable == 'single') {
-					selection = [this.props.data._properId];
-				}
-			}
-
-			if (this.props.selectable == 'single') {
-				e.preventDefault();
-			}
-
-			selection = _.uniq(selection);
-			this.triggerSelect(immutable.List(selection));
-		}
-	},
-
 	triggerSelect(selection = []) {
 		if (typeof this.props.onSelect == 'function') {
 			this.props.onSelect(selection);
@@ -56,7 +27,7 @@ export default React.createClass({
 	},
 
 	render() {
-		return <div className={'propertree-node-desc ' + this.props.selectable} onClick={this.handleSelection}>
+		return <div className={'propertree-node-desc ' + this.props.selectable}>
 			<div className="propertree-node-bg" />
 			<this.props.iconRenderer {...this.props} />
 			<span className="propertree-node-name">

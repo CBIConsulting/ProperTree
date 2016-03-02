@@ -92,7 +92,7 @@ export default React.createClass({
 			<div className={"propertree-item "+selectedClass}>
 				{toggler}
 				{selectors}
-				<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} onSelect={this.handleSelect} />
+				<Renderer data={this.props.data} has_children={has_children} selectable={this.props.selectable} selection={this.props.selection} /*onSelect={this.handleSelect}*/ />
 			</div>
 			{children}
 		</li>;

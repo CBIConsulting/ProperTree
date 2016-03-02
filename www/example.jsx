@@ -44,6 +44,46 @@ $(() => {
 			parent_id: 2,
 			label: 'Sub 3'
 		},
+		{
+			id: 10,
+			parent_id: 1,
+			label: 'Node Folder'
+		},
+		{
+			id: 11,
+			parent_id: 10,
+			label: 'Sub Node'
+		},
+		{
+			id: 12,
+			parent_id: 11,
+			label: 'Node with a extremly long text to test what happens when rendering the node in the tree and text is very very very long'
+		},
+		{
+			id: 13,
+			parent_id: 11,
+			label: 'España'
+		},
+		{
+			id: 14,
+			parent_id: 11,
+			label: 'Camión'
+		},
+		{
+			id: 20,
+			parent_id: null,
+			label: 'Root 2'
+		},
+		{
+			id: 21,
+			parent_id: 20,
+			label: 'Folder TR1'
+		},
+		{
+			id: 22,
+			parent_id: 20,
+			label: 'Folder TR2'
+		}
 	];
 
 	React.render(<ProperTree data={data} selectable="single" collapsable={true} disabled={[6, 3]} defaultExpanded={[5]} defaultSelected={[5]} onSelect={(selection) => {
