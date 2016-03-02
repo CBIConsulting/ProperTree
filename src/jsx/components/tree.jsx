@@ -95,8 +95,8 @@ export default React.createClass({
 			item._properId = item[this.props.idField];
 			item._parent = item[this.props.parentField];
 			item._selected = selection.indexOf(item._properId) >= 0;
-			item._label = item[this.props.displayField];
-			item._search = removeDiacritics(item._label);
+			item._label = '' + item[this.props.displayField];
+			item._search = item._label ? removeDiacritics(item._label) : '';
 			item._collapsed = true && this.props.collapsable;
 
 			return item;
