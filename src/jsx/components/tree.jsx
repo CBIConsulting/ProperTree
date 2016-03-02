@@ -6,6 +6,7 @@ import Node from "./node";
 import ItemRenderer from "./renderer";
 import Fa from "react-fontawesome";
 import IconRenderer from "./iconRenderer";
+import removeDiacritics from "./search";
 
 function pathTo(data, node) {
 	let path = [];
@@ -95,6 +96,7 @@ export default React.createClass({
 			item._parent = item[this.props.parentField];
 			item._selected = selection.indexOf(item._properId) >= 0;
 			item._label = item[this.props.displayField];
+			item._search = removeDiacritics(item._label);
 			item._collapsed = true && this.props.collapsable;
 
 			return item;
