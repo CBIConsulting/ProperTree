@@ -196,7 +196,7 @@ export default React.createClass({
 		if (typeof this.props.onSelect === 'function') {
 			selectedNodes = _.map(selection.toJS(), (id) => {
 				findCond[this.props.idField] = id;
-				return _.findWhere(this._baseData, findCond);
+				return _.findWhere(this.props.data, findCond);
 			});
 
 			this.props.onSelect(selectedNodes);
