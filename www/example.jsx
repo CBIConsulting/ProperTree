@@ -86,15 +86,15 @@ $(() => {
 		}
 	];
 
-	React.render(<ProperTree data={data} selectable="single" collapsable={true} disabled={[6, 3]} defaultExpanded={[5]} defaultSelected={[5]} onSelect={(selection) => {
+	ReactDOM.render(<ProperTree data={data} selectable="single" collapsable={true} disabled={[6, 3]} defaultExpanded={[5]} defaultSelected={[5]} onSelect={(selection) => {
 		console.log('Tree 1 - Selection', selection);
 	}}/>, document.getElementById('tree-1'));
 
-	React.render(<ProperTree data={data} collapsable={true} disabled={[6, 3]} defaultExpanded={[5]} defaultSelected={[1,5]} onSelect={(selection) => {
+	ReactDOM.render(<ProperTree data={data} collapsable={true} disabled={[6, 3]} defaultExpanded={[5]} defaultSelected={[1,5]} onSelect={(selection) => {
 		console.log('Tree 2 - Selection', selection);
 	}}/>, document.getElementById('tree-2'));
 
-	React.render(<ProperTree data={data} selectable="single" searchable={true} collapsable={true} defaultExpanded={[5]} defaultSelected={[1]} onSelect={(selection) => {
+	ReactDOM.render(<ProperTree data={data} selectable="single" searchable={true} collapsable={true} defaultExpanded={[5]} defaultSelected={[1]} onSelect={(selection) => {
 		console.log('Tree 3 - Selection', selection);
 	}}/>, document.getElementById('tree-3'));
 

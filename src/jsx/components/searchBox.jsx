@@ -51,7 +51,7 @@ export default React.createClass({
 			if (!this.searching) {
 				this.searching = true;
 				this.lastExpanded = _.clone(expanded);
-			} 
+			}
 
 			let search = _.filter(results, (item) => {
 				return regex.test(item._search);
@@ -85,7 +85,7 @@ export default React.createClass({
 	},
 
 	handleClear(event) {
-		const $searchBox = $(this.refs.searchBox.getDOMNode());
+		const $searchBox = $(this.refs.searchBox);
 
 		$searchBox.val('');
 
@@ -96,10 +96,10 @@ export default React.createClass({
 		if (this.searching) {
 			this.searching = false;
 			const expanded = _.unique(_.union(this.lastExpanded, selected));
-			
-			const $searchBox = $(this.refs.searchBox.getDOMNode());
+
+			const $searchBox = $(this.refs.searchBox);
 			$searchBox.val('');
-			
+
 			return expanded;
 		}
 
