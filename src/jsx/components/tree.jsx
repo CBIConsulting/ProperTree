@@ -25,7 +25,7 @@ function pathTo(data, node) {
 	return _.uniq(path);
 }
 
-export default React.createClass({
+const Tree = React.createClass({
 	getDefaultProps() {
 		return {
 			data: null,
@@ -296,3 +296,5 @@ export default React.createClass({
 		</div>;
 	}
 });
+
+export default Tree;

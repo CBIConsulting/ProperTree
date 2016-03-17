@@ -15,13 +15,13 @@ module.exports = {
   resolve: {
     extensions: ["", ".js", ".jsx"]
     //node_modules: ["web_modules", "node_modules"]  (Default Settings)
-  },  
+  },
   module: {
     loaders: [
       {
         test: /\.(js|jsx)$/,
         exclude: [nodeModulesPath],
-        loaders: ["react-hot", "babel"],
+        loaders: ["babel"],
         exclude: [nodeModulesPath]
       },
       {
